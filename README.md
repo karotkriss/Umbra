@@ -1,7 +1,7 @@
-<br>
+
 <div align="center" style="padding-bottom: 2rem;">
-  <a href="https://dev.egov.gy/dev-tools/umbra" style="padding-bottom: 1rem;">
-    <img src="images/icons/umbra-black.png" alt="Logo height="192">
+  <a href="https://dev.egov.gy/dev-tools/umbra" style="padding bottom: 3rem;">
+    <img src="images/icons/umbra-black.png" alt="Logo" style="width: 192px; padding: 2rem">
   </a>
 
   <h1 align="center">Umbra JS API for Frappe</h1>
