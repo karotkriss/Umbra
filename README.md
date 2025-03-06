@@ -1,93 +1,241 @@
-# Umbra
+<br>
+<div align="center" style="padding-bottom: 2rem;">
+  <a href="https://dev.egov.gy/dev-tools/umbra" style="padding-bottom: 1rem;">
+    <img src="images/icons/umbra-black.png" alt="Logo height="192">
+  </a>
+
+  <h1 align="center">Umbra JS API for Frappe</h1>
+
+  <div align="center">
+    Hide Frappe UI Elements with Clean Code.
+    <br>
+    <br>
+    <div style="text-align: justify; text-justify: inter-word;">
+    Umbra is a lightweight JavaScript utility designed specifically for Frappe forms. It simplifies the process of hiding UI elements you might not need, so you can focus on building custom functionality. Whether you're a junior developer or an experienced pro, Umbra makes it easy to streamline your Frappe interfaces with minimal code.
+    </div>
+  </div>
+</div>
 
 
 
-## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+---
 
-## Add your files
+## Table of Contents
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Actions](#actions)
+  - [Timeline](#timeline)
+  - [Comment Box](#comment-box)
+  - [Sidebar](#sidebar)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
+- [License](#license)
 
-```
-cd existing_repo
-git remote add origin https://dev.egov.gy/dev-tools/umbra.git
-git branch -M master
-git push -uf origin master
-```
+---
 
-## Integrate with your tools
+## Overview
 
-- [ ] [Set up project integrations](https://dev.egov.gy/dev-tools/umbra/-/settings/integrations)
+Umbra helps you hide common UI components on Frappe forms—such as action buttons, timeline items, comment boxes, and sidebars—using a simple, consistent API. It allows you to specify conditions and permissions that determine when an element should be hidden, giving you full control over your form's appearance.
 
-## Collaborate with your team
+This utility is especially useful in custom Frappe apps where you want to declutter the interface for your end users.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+---
 
-## Test and Deploy
+## Features
 
-Use the built-in continuous integration in GitLab.
+- **Simple API:** Easily hide elements with one function call.
+- **Conditional Hiding:** Use callbacks to determine when elements are hidden (e.g., based on document status).
+- **Role-Based Control:** Bypass hiding for users with specific roles.
+- **Flexible Filtering:** Customize which timeline items are displayed, including filtering communications.
+- **Forced CSS Override:** Ensures elements are hidden even if other styles override your settings.
+- **Modular Design:** Separate functions for actions, timeline, comment box, and sidebar.
+- **Easy Integration:** Manage Umbra as a Git submodule and reference it in your `hooks.py` for a clean, maintainable project.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+---
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+
+Umbra is distributed as a standalone JavaScript module. The recommended approach is to include it as a Git submodule in your custom Frappe app. This allows you to keep Umbra’s code separate, update it easily, and reference it alongside your other JavaScript assets.
+
+### Adding Umbra as a Git Submodule
+
+1. **Navigate to Your App’s Public JS Folder:**
+
+   Open your terminal and change to the directory where your app’s JavaScript files reside (typically `your_app/public/js`):
+
+   ```bash
+   cd path/to/your_app/public/js
+   ```
+
+2. **Add Umbra as a Submodule:**
+
+    Run the following command (replace the URL with Umbra’s repository URL):
+
+    ```bash
+    git submodule add https://dev.egov.gy/dev-tools/umbra umbra
+    ```
+    This creates a new folder called `umbra` inside your `public/js` directory that contains the Umbra module.
+
+3. **Initialize the Submodule (for New Clones):**
+
+    When you or others clone your repository, run:
+
+    ```bash
+    git submodule update --init --recursive
+    ```
+    This ensures Umbra is downloaded along with your custom app.
+
+### Referencing Umbra via hooks.py
+
+Frappe best practices recommend including your JavaScript assets in your app’s `hooks.py` file. You can specify multiple JS files by listing them in an array. For example, add the following to your `hooks.py`:
+
+```python
+app_include_js = [
+    "/assets/your_app/js/umbra/umbra.js",
+    # Include any other JS files your app needs
+]
+```
+This configuration ensures that Umbra loads on every page where your app is active.
+
+---
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Umbra is intended for use in your Frappe form's onload hook. Here are some common use cases:
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Actions
 
+Hide the actions button group based on a condition:
+
+```javascript
+frappe.ui.form.on('YourDoctype', {
+    onload: function(frm) {
+        Umbra.actions({
+            conditional: cur_frm => cur_frm.doc.status === 'Draft',
+            permissions: ['System Manager'],
+            debug: true
+        });
+  }
+});
+
+```
+
+### Timeline
+
+Filter the timeline to show only specific communication items or all items:
+
+```javascript
+// Show only communications for the current user when workflow_state is Draft:
+frappe.ui.form.on('YourDoctype', {
+    onload: function(frm) {
+        Umbra.timeline({
+            conditional: () => true,
+            filter: {
+                communications: {
+                    userOnly: true,
+                    conditional: () => frm.doc.workflow_state === "Draft"
+                }
+            },
+            extras: {
+                hideActivitySwitch: true  // Defaults to true if not specified.
+            },
+            debug: true
+        });
+    }
+});
+
+```
+Or, display all timeline items:
+
+```javascript
+frappe.ui.form.on('YourDoctype', {
+    onload: function(frm) {
+        Umbra.timeline({
+            filter: { all: true },
+            extras: { hideActivitySwitch: true },
+            debug: true
+        });
+    }
+});
+
+```
+Or, hide the timeline completely:
+
+```javascript
+frappe.ui.form.on('YourDoctype', {
+    onload: function(frm) {
+        Umbra.timeline({
+            filter: { all: true },
+            extras: { hideActivitySwitch: true },
+            debug: true
+        });
+    }
+});
+
+```
+
+### Comment Box
+
+Hide the comment box if certain conditions are met:
+
+```javascript
+frappe.ui.form.on('YourDoctype', {
+    onload: function(frm) {
+        Umbra.comment({
+            conditional: cur_frm => cur_frm.doc.status === 'Draft',
+            permissions: ['System Manager'],
+            debug: true
+        });
+    }
+});
+
+```
+
+### Sidebar
+
+Hide the sidebar (the layout section containing the form sidebar):
+
+```javascript
+frappe.ui.form.on('YourDoctype', {
+    onload: function(frm) {
+        Umbra.sidebar({
+            conditional: cur_frm => cur_frm.doc.status === 'Draft',
+            permissions: ['System Manager'],
+            debug: true
+        });
+    }
+});
+
+```
+
+---
+
+## API Reference
+
+For a detailed description of each method and its properties, refer to the inline JSDoc comments in the `Umbra.js` file.
+
+- Umbra.actions({props}): Hides the actions button group.
+- Umbra.timeline({props}): Filters and displays timeline items based on specified criteria.
+- Umbra.comment({props}): Hides the comment box.
+- Umbra.sidebar({props}): Hides the sidebar by targeting the layout side section that contains the form sidebar.
+
+> All props are optional
+
+---
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Contributions are welcome! Please follow these guidelines:
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Fork the repository: Create your own branch for your changes.
+Write clear code: Follow the existing style and include comments.
+Update the README: If you add features, update the documentation.
+Submit a pull request: Provide a clear description of your changes.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+---
 
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Umbra is designed to streamline your Frappe development process by making it easier to hide unwanted UI elements. With its modular design and simple integration via Git submodules and hooks.py, Umbra is an ideal utility for developers of all skill levels. Give it a try and see how much cleaner your custom Frappe interfaces can become!
