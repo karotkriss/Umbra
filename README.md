@@ -106,11 +106,22 @@ This configuration ensures that Umbra loads on every page where your app is acti
 
 ## Usage
 
-Umbra is intended for use in your Frappe form's onload hook. Here are some common use cases:
+Umbra is intended for use in your javascript files or client scripts. Here's some example usage:
+
+```javascript
+Umbra.elementToHide({props})
+```
+
+> All props are optional
+>
+> You can refer to the JsDoc in the `Umbra.js` file for more details 
 
 ### Actions
 
-Hide the actions button group based on a condition:
+```javascript
+Umbra.actions()
+```
+Hide the actions button group if certain conditions are met:
 
 ```javascript
 frappe.ui.form.on('YourDoctype', {
@@ -126,6 +137,10 @@ frappe.ui.form.on('YourDoctype', {
 ```
 
 ### Timeline
+
+```javascript
+Umbra.timeline()
+```
 
 Filter the timeline to show only specific communication items or all items:
 
@@ -180,6 +195,9 @@ frappe.ui.form.on('YourDoctype', {
 ```
 
 ### Comment Box
+```javascript
+Umbra.comment()
+```
 
 Hide the comment box if certain conditions are met:
 
@@ -197,6 +215,10 @@ frappe.ui.form.on('YourDoctype', {
 ```
 
 ### Sidebar
+
+```javascript
+Umbra.sidebar()
+```
 
 Hide the sidebar (the layout section containing the form sidebar):
 
@@ -231,10 +253,10 @@ For a detailed description of each method and its properties, refer to the inlin
 
 Contributions are welcome! Please follow these guidelines:
 
-Fork the repository: Create your own branch for your changes.
-Write clear code: Follow the existing style and include comments.
-Update the README: If you add features, update the documentation.
-Submit a pull request: Provide a clear description of your changes.
+- Fork the repository: Create your own branch for your changes.
+- Write clear code: Follow the existing style and include comments.
+- Update the README: If you add features, update the documentation.
+- Submit a pull request: Provide a clear description of your changes.
 
 ---
 
