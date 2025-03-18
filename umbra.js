@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe forms.
  * 
- * @version 0.1.0
+ * @version 1.0.0
  *
  * @module Umbra
  */
@@ -454,13 +454,186 @@ const Umbra = (function () {
 		}
 	}
 
+	// ----------------------------
+	// Form Field
+	// ----------------------------
+	/**
+	 * Dynamic API to hide individual fields in a Frappe form.
+	 * 
+	 * You can call this as:
+	 *     Umbra.field.FIELD_NAME(props);
+	 * 
+	 * where `FIELD_NAME` is the actual fieldname you wish to hide.
+	 * 
+	 * Utils.js is a dependency of this API
+	 * 
+	 * @namespace Umbra.field
+	 * 
+	 * @function
+	 * 
+	 * @param {Object} [props] - Configuration options.
+	 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the field should be hidden.
+	 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
+	 *     the field will not be hidden.
+	 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+	 *
+	 * @example
+	 * // Hide the field "my_field" if the document status is 'Draft'
+	 * // and the current user is not a System Manager.
+	 * Umbra.field.my_field({
+	 *   conditional: function(cur_frm) { return cur_frm.doc.status === "Draft"; },
+	 *   permissions: ["System Manager"],
+	 *   debug: true
+	 * });
+	 */
+	const field = new Proxy({}, {
+		get(target, fieldName) {
+			return function (props = {}) {
+				// Check if Utils is available
+				if (typeof Utils === 'undefined') {
+					console.warn("Umbra.field: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
+					frappe.show_alert("Utils module is missing. Please include Utils.js.");
+					return;
+				}
 
-	// Expose public methods.
+				// Check conditional prop
+				if (typeof props.conditional === "function") {
+					if (!props.conditional(window.cur_frm)) {
+						if (props.debug) {
+							console.debug(`Umbra.field.${fieldName}(): Top-level conditional check returned false.`);
+						}
+						return;
+					}
+				}
+
+				// Check permissions prop: if user has any bypass role, skip hiding
+				if (Array.isArray(props.permissions)) {
+					if (userHasRole(props.permissions)) {
+						if (props.debug) {
+							console.debug(`Umbra.field.${fieldName}(): User has bypass role, skipping field hiding.`);
+						}
+						return;
+					}
+				}
+
+				// Check if the field exists and is not a Tab Break, Section Break, or Column Break.
+				const frm = cur_frm;
+				if (frm && frm.fields_dict && frm.fields_dict[fieldName]) {
+					const fieldDef = frm.fields_dict[fieldName].df;
+					const fieldType = fieldDef.fieldtype;
+					if (["Tab Break", "Section Break", "Column Break"].includes(fieldType)) {
+						console.warn(`Umbra.field.${fieldName}(): Field type "${fieldType}" cannot be hidden using Umbra.field.`);
+						frappe.show_alert({
+							message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.field.`,
+							indicator: 'warning'
+						});
+						return;
+					}
+				} else {
+					console.warn(`Umbra.field.${fieldName}(): Field not found in current form.`);
+					frappe.show_alert(`Field "${fieldName}" not found in current form.`);
+					return;
+				}
+
+				// Hide the field using Utils.hideFields.
+				Utils.hideFields({ fields: [fieldName] });
+
+				if (props.debug) {
+					console.debug(`Umbra.field.${fieldName}(): Field "${fieldName}" hidden.`);
+				}
+			};
+		}
+	})
+
+	// ----------------------------
+	// Form Section
+	// ----------------------------
+	/**
+	 * Dynamic API to hide individual sections in a Frappe form.
+	 *
+	 * You can call this as:
+	 *     Umbra.section.SECTION_NAME(props);
+	 *
+	 * where `SECTION_NAME` is the actual fieldname of the section you wish to hide.
+	 * This API depends on Utils.js.
+	 *
+	 * @namespace Umbra.section
+	 * 
+	 * @function
+	 * 
+	 * @param {Object} [props] - Configuration options.
+	 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the section should be hidden.
+	 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
+	 *     the section will not be hidden.
+	 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+	 *
+	 * @example
+	 * // Hide the section "my_section" if the document status is 'Draft'
+	 * // and the current user is not a System Manager.
+	 * Umbra.section.my_section({
+	 *   conditional: function(cur_frm) { return cur_frm.doc.status === "Draft"; },
+	 *   permissions: ["System Manager"],
+	 *   debug: true
+	 * });
+	 */
+	const section = new Proxy({}, {
+		get(target, sectionName) {
+			return function (props = {}) {
+				// Check if Utils is available
+				if (typeof Utils === 'undefined') {
+					console.warn("Umbra.section: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
+					frappe.show_alert("Utils module is missing. Please include Utils.js.");
+					return;
+				}
+				// Check conditional prop
+				if (typeof props.conditional === "function" && !props.conditional(window.cur_frm)) {
+					if (props.debug) {
+						console.debug(`Umbra.section.${sectionName}(): Top-level conditional check returned false.`);
+					}
+					return;
+				}
+				// Check permissions prop: if user has any bypass role, skip hiding
+				if (Array.isArray(props.permissions) && userHasRole(props.permissions)) {
+					if (props.debug) {
+						console.debug(`Umbra.section.${sectionName}(): User has bypass role, skipping section hiding.`);
+					}
+					return;
+				}
+				// Check if the section exists and is a Section Break
+				const frm = cur_frm;
+				if (frm && frm.fields_dict && frm.fields_dict[sectionName]) {
+					const fieldDef = frm.fields_dict[sectionName].df;
+					const fieldType = fieldDef.fieldtype;
+					if (fieldType !== "Section Break") {
+						console.warn(`Umbra.section.${sectionName}(): Field type "${fieldType}" is not a Section Break.`);
+						frappe.show_alert({
+							message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.section.`,
+							indicator: 'warning'
+						});
+						return;
+					}
+				} else {
+					console.warn(`Umbra.section.${sectionName}(): Section not found in current form.`);
+					frappe.show_alert(`Section "${sectionName}" not found in current form.`);
+					return;
+				}
+				// Hide the section using Utils.hideFields.
+				Utils.hideFields({ fields: [sectionName] });
+				if (props.debug) {
+					console.debug(`Umbra.section.${sectionName}(): Section "${sectionName}" hidden.`);
+				}
+			};
+		}
+	})
+
+	// Expose public API methods.
 	return {
 		actions: actions,
 		timeline: timeline,
 		comment: comment,
-		sidebar: sidebar
+		sidebar: sidebar,
+		field: field,
+		section: section
 	};
 })();
 

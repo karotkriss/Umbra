@@ -7,7 +7,7 @@
   <h1 align="center">Umbra JS API for Frappe</h1>
 
   <div align="center">
-    Hide Frappe UI Elements with Clean Code.
+    Hide Frappe UI and Form Elements with Clean Code.
     <br>
     <br>
     <div style="text-align: justify; text-justify: inter-word;">
@@ -24,17 +24,24 @@
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [Overview](#overview)
 - [Features](#features)
 - [Installation](#installation)
+  - [Method 1: CDN (Recommended)](#method-1-cdn-recommended)
+  - [Method 2: Git Subtree ()](#method-2-git-subtree-)
+    - [Adding Umbra.js as a Git Subtree](#adding-umbrajs-as-a-git-subtree)
+    - [Referencing in hooks.py](#referencing-in-hookspy)
 - [Usage](#usage)
   - [Actions](#actions)
   - [Timeline](#timeline)
   - [Comment Box](#comment-box)
   - [Sidebar](#sidebar)
-- [API Reference](#api-reference)
+  - [Form Fields](#form-fields)
+  - [Form Sections](#form-sections)
 - [Contributing](#contributing)
-- [License](#license)
+<!-- - [API Reference](#api-reference) -->
+- [Contributing](#contributing)
 
 ---
 
@@ -60,47 +67,47 @@ This utility is especially useful in custom Frappe apps where you want to declut
 
 ## Installation
 
-Umbra is distributed as a standalone JavaScript module. The recommended approach is to include it as a Git submodule in your custom Frappe app. This allows you to keep Umbra’s code separate, update it easily, and reference it alongside your other JavaScript assets.
+### Method 1: CDN (Recommended)
 
-### Adding Umbra as a Git Submodule
-
-1. **Navigate to Your App’s Public JS Folder:**
-
-   Open your terminal and change to the directory where your app’s JavaScript files reside (typically `your_app/public/js`):
-
-   ```bash
-   cd path/to/your_app/public/js
-   ```
-
-2. **Add Umbra as a Submodule:**
-
-    Run the following command (replace the URL with Umbra’s repository URL):
-
-    ```bash
-    git submodule add https://dev.egov.gy/dev-tools/umbra umbra
-    ```
-    This creates a new folder called `umbra` inside your `public/js` directory that contains the Umbra module.
-
-3. **Initialize the Submodule (for New Clones):**
-
-    When you or others clone your repository, run:
-
-    ```bash
-    git submodule update --init --recursive
-    ```
-    This ensures Umbra is downloaded along with your custom app.
-
-### Referencing Umbra via hooks.py
-
-Frappe best practices recommend including your JavaScript assets in your app’s `hooks.py` file. You can specify multiple JS files by listing them in an array. For example, add the following to your `hooks.py`:
+Reference the `jsdelivr` in your Frappe app’s `hooks.py` to load it on your pages:
 
 ```python
 app_include_js = [
-    "/assets/your_app/js/umbra/umbra.js",
-    # Include any other JS files your app needs
+	"https://cdn.jsdelivr.net/gh/karotkriss/Umbra@latest/umbra.js",
+	# Other JS files can be included here
 ]
+
 ```
-This configuration ensures that Umbra loads on every page where your app is active.
+### Method 2: Git Subtree ()
+
+#### Adding Umbra.js as a Git Subtree
+
+1. **Navigate to Your App’s root:**
+	```bash
+	cd path/to/your_apps/root/directory
+
+	```
+
+	This creates a new folder called umbra in the public folder that contains the umbra.js module.
+2. **Add Umbra.js as a Subtree:**
+	```bash
+	git subtree add --prefix=path/to/public/js/folder/umbra https://github.com/karotkriss/Umbra.git master --squash
+
+	```
+
+
+#### Referencing in hooks.py
+
+Reference the Umbra.js file in your Frappe app’s `hooks.py` to load it on your pages:
+
+```python
+
+app_include_js = [
+	"/assets/your_app/js/umbra/umbra.js",
+	# Other JS files can be included here
+]
+
+```
 
 ---
 
@@ -112,9 +119,11 @@ Umbra is intended for use in your javascript files or client scripts. Here's som
 Umbra.elementToHide({props})
 ```
 
+>
 > All props are optional
 >
 > You can refer to the JsDoc in the `Umbra.js` file for more details 
+> 
 
 ### Actions
 
@@ -235,7 +244,45 @@ frappe.ui.form.on('YourDoctype', {
 
 ```
 
----
+### Form Fields
+
+```javascript
+Umbra.field.name_of_desired_field()
+
+```
+
+Hide the field "my_field" if the document status is 'Draft'
+and the current user is not a System Manager.
+
+```javascript
+Umbra.field.my_field({
+  conditional: (cur_frm) { return cur_frm.doc.status === "Draft"; },
+  permissions: ["System Manager"],
+  debug: true
+});
+
+```
+### Form Sections
+
+```javascript
+Umbra.section.name_of_desired_section()
+
+```
+
+Hide the section "my_section" if the document status is 'Draft'
+and the current user is not a System Manager.
+
+```javascript
+Umbra.section.my_section({
+  conditional: (cur_frm) { return cur_frm.doc.status === "Draft"; },
+  permissions: ["System Manager"],
+  debug: true
+});
+
+```
+	 
+
+<!-- ---
 
 ## API Reference
 
@@ -246,7 +293,7 @@ For a detailed description of each method and its properties, refer to the inlin
 - Umbra.comment({props}): Hides the comment box.
 - Umbra.sidebar({props}): Hides the sidebar by targeting the layout side section that contains the form sidebar.
 
-> All props are optional
+> All props are optional -->
 
 ---
 ## Contributing
