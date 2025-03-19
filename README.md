@@ -16,9 +16,9 @@
   </div>
 </div>
 
-
+<br><br>
 <img src="images/drawings/umbra-tutorial-transparent.png" style="padding: 2rem">
-
+<br><br>
 
 ---
 
