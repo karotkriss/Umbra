@@ -17,7 +17,7 @@
 </div>
 
 <br><br>
-<img src="images/drawings/umbra-tutorial-transparent.png" style="padding: 2rem">
+<img src="images/drawings/umbra-tutorial.png" style="padding: 2rem">
 <br><br>
 
 ---
@@ -39,6 +39,10 @@
   - [Sidebar](#sidebar)
   - [Form Fields](#form-fields)
   - [Form Sections](#form-sections)
+  - [Workspace](#workspace)
+    - [Workspace Sidebar](#workspace-sidebar)
+    - [New Workspace Button](#new-workspace-button)
+    - [Edit Workspace Button](#edit-workspace-button)
 - [Contributing](#contributing)
 <!-- - [API Reference](#api-reference) -->
 - [Contributing](#contributing)
@@ -248,7 +252,6 @@ frappe.ui.form.on('YourDoctype', {
 
 ```javascript
 Umbra.field.name_of_desired_field()
-
 ```
 
 Hide the field "my_field" if the document status is 'Draft'
@@ -266,7 +269,6 @@ Umbra.field.my_field({
 
 ```javascript
 Umbra.section.name_of_desired_section()
-
 ```
 
 Hide the section "my_section" if the document status is 'Draft'
@@ -281,7 +283,71 @@ Umbra.section.my_section({
 
 ```
 	 
+### Workspace
 
+> <br>
+> :information_source:	The following functions are intended to be used in any one of your `app_included_js` files
+> <br>
+> <br>
+
+#### Workspace Sidebar
+```javascript
+Umbra.workspace.sidebar()
+```
+Hide Workspace sidebar by calling it in a [self-invoked function](https://samah-gaber.medium.com/self-invoking-functions-in-javascript-ea6ee39ba4d8)
+
+```javascript
+* (() => {
+*   $(document).ready(() => {
+*     if (typeof Umbra !== 'undefined' && Umbra.workspace) {
+*       // Automatically hide the Workspace sidebar
+*       Umbra.workspace.sidebar();
+*     } else {
+*       console.warn("Umbra.workspace is not available.");
+*     }
+*   })
+* })();
+
+```
+
+#### New Workspace Button
+```javascript
+Umbra.workspace.new()
+
+```
+Hide New Workspace Button by calling it in a [self-invoked function](https://samah-gaber.medium.com/self-invoking-functions-in-javascript-ea6ee39ba4d8)
+```javascript
+(() => {
+  $(document).ready(() => {
+    if (typeof Umbra !== 'undefined' && Umbra.workspace) {
+      // Automatically hide the Create Workspace button
+      Umbra.workspace.new();
+    } else {
+      console.warn("Umbra.workspace is not available.");
+    }
+  })
+})();
+
+```
+#### Edit Workspace Button
+
+```javascript
+Umbra.workspace.edit()
+
+```
+Hide Edit Workspace Edit by calling it in a [self-invoked function](https://samah-gaber.medium.com/self-invoking-functions-in-javascript-ea6ee39ba4d8)
+
+```javascript
+(() => {
+  $(document).ready(() => {
+    // Automatically hide the Create Workspace button
+    Umbra.workspace.new();
+  } else {
+    console.warn("Umbra.workspace is not available.");
+  }
+})();
+
+```
 <!-- ---
 
 ## API Reference

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0] - 2025-03-19
+
+### Added
+
+- Compatibility for workspace pages with `Umbra.workspace`.
+  - `Umbra.workspace.edit()`: Hide the Edit Workspace button.
+  - `Umbra.workspace.create()`: Hide the Create Workspace button.
+  - `Umbra.workspace.sidebar()`: Hide the Workspace sidebar.
+
 ## [1.0.0] - 2025-03-18
 
 ### Added

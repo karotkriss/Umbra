@@ -2,9 +2,9 @@
  * Umbra.js
  *
  * Hides things.
- * Umbra simplifies hiding elements we might commonly hide in Frappe forms.
+ * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.0.0
+ * @version 1.1.0
  *
  * @module Umbra
  */
@@ -626,6 +626,161 @@ const Umbra = (function () {
 		}
 	})
 
+	// ----------------------------
+	// Workspace
+	// ----------------------------
+	/**
+	 * Dynamic API to hide individual elements for the /app route.
+	 * 
+	 * @namespace Umbra.workspace
+	* (() => {
+	*   $(document).ready(() => {
+	*     // Automatically hide the Create Workspace button
+	*     Umbra.workspace.new();
+	*   } else {
+	*     console.warn("Umbra.workspace is not available.");
+	*   }
+	* })();
+	 * 
+	 */
+	const workspace = {
+		// ----------------------------
+		// Edit Workspace Button
+		// ----------------------------
+		/**
+		 * Hides the Edit Workspace button.
+		 *
+		 * @param {Object} [props] - Configuration options.
+		 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the edit button should be hidden
+		 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
+		 *        the edit button will not be hidden.
+		 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+		 *
+		 * @example
+		 
+		 */
+		edit: function (props = {}) {
+			if (typeof props.conditional === "function") {
+				if (!props.conditional()) {
+					if (props.debug) console.debug("Umbra.workspace.edit(): Conditional check returned false.");
+					return;
+				}
+			}
+
+			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+				if (userHasRole(props.permissions)) {
+					if (props.debug) console.debug("Umbra.workspace.edit(): User has bypass role, skipping hide.");
+					return;
+				}
+			}
+			// Hide the Edit Workspace button.
+			const $btn = $('[data-page-route=Workspaces] .workspace-footer').find('[data-label="Edit"]');
+			if (!$btn.length) {
+				console.warn("Umbra.workspace.edit(): Edit workspace button not found.");
+				frappe.show_alert("Edit workspace button not found.");
+				return;
+			}
+			$btn.css("cssText", "display: none !important;");
+			if (props.debug) console.debug("Umbra.workspace.edit(): Edit workspace button hidden.");
+		},
+		// ----------------------------
+		// Edit Workspace Button
+		// ----------------------------
+		/**
+		 * Hides the New Workspace button.
+		 *
+		 * @param {Object} [props] - Configuration options.
+		 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the new button should be hidden
+		 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
+		 *        the create button will not be hidden.
+		 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+		 *
+		 * @example
+		 * (() => {
+		 *   $(document).ready(() => {
+		 *     // Automatically hide the Create Workspace button
+		 *     Umbra.workspace.new();
+		 *   } else {
+		 *     console.warn("Umbra.workspace is not available.");
+		 *   }
+		 * })();
+		 */
+		new: function (props = {}) {
+			if (typeof props.conditional === "function") {
+				if (!props.conditional()) {
+					if (props.debug) console.debug("Umbra.workspace.new(): Conditional check returned false.");
+					return;
+				}
+			}
+			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+				if (userHasRole(props.permissions)) {
+					if (props.debug) console.debug("Umbra.workspace.new(): User has bypass role, skipping hide.");
+					return;
+				}
+			}
+
+			const $btn = $('[data-page-route=Workspaces] .workspace-footer').find('[data-label="New"]');
+			if (!$btn.length) {
+				console.warn("Umbra.workspace.new(): Create workspace button not found.");
+				frappe.show_alert("Create workspace button not found.");
+				return;
+			}
+			$btn.css("cssText", "display: none !important;");
+			if (props.debug) console.debug("Umbra.workspace.new(): Create workspace button hidden.");
+		},
+
+		// ----------------------------
+		// Workspace Sidebar
+		// ----------------------------
+		/**
+		 * Hides the Workspace sidebar.
+		 *
+		 * @param {Object} [props] - Configuration options.
+		 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the workspace sidebar should be hidden
+		 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
+		 *        the sidebar will not be hidden.
+		 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+		 *
+		 * @example
+		 * (() => {
+		 *   $(document).ready(() => {
+		 *     if (typeof Umbra !== 'undefined' && Umbra.workspace) {
+		 *       // Automatically hide the Workspace sidebar
+		 *       Umbra.workspace.sidebar();
+		 *     } else {
+		 *       console.warn("Umbra.workspace is not available.");
+		 *     }
+		 *   })
+		 * })();
+		 */
+		sidebar: function (props = {}) {
+			if (typeof props.conditional === "function") {
+				if (!props.conditional()) {
+					if (props.debug) console.debug("Umbra.workspace.sidebar(): Conditional check returned false.");
+					return;
+				}
+			}
+			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+				if (userHasRole(props.permissions)) {
+					if (props.debug) console.debug("Umbra.workspace.sidebar(): User has bypass role, skipping hide.");
+					return;
+				}
+			}
+
+			const $sidebar = $('[data-page-route=Workspaces] .layout-side-section');
+			if (!$sidebar.length) {
+				console.warn("Umbra.workspace.sidebar(): Workspace sidebar not found.");
+				frappe.show_alert("Workspace sidebar not found.");
+				return;
+			}
+			$sidebar.css("cssText", "display: none !important;");
+
+			$("button.sidebar-toggle-btn").css("cssText", "display: none !important;");
+			if (props.debug) console.debug("Umbra.workspace.sidebar(): Workspace sidebar hidden.");
+		}
+	};
+
+
 	// Expose public API methods.
 	return {
 		actions: actions,
@@ -633,7 +788,8 @@ const Umbra = (function () {
 		comment: comment,
 		sidebar: sidebar,
 		field: field,
-		section: section
+		section: section,
+		workspace: workspace
 	};
 })();
 
