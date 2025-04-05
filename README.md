@@ -32,6 +32,7 @@
   - [Method 2: Git Subtree ()](#method-2-git-subtree-)
     - [Adding Umbra.js as a Git Subtree](#adding-umbrajs-as-a-git-subtree)
     - [Referencing in hooks.py](#referencing-in-hookspy)
+  - [Clear Cache](#clear-cache)
 - [Usage](#usage)
   - [Actions](#actions)
   - [Timeline](#timeline)
@@ -112,6 +113,18 @@ app_include_js = [
 ]
 
 ```
+
+### Clear Cache
+
+```bash
+SITE_NAME=localhost #replace this with the name of your site
+bench --site $SITE_NAME clear-cache
+bench --site $SITE_NAME clear-website-cache
+```
+
+> You should now be able to use any Utils method by calling `Utils.[method]` client  side, <br>
+> You may also need to clear your browser cache as well. <br>
+> Reference to [Usage](#usage) for all a list methods and how to use them.
 
 ---
 
@@ -297,16 +310,16 @@ Umbra.workspace.sidebar()
 Hide Workspace sidebar by calling it in a [self-invoked function](https://samah-gaber.medium.com/self-invoking-functions-in-javascript-ea6ee39ba4d8)
 
 ```javascript
-* (() => {
-*   $(document).ready(() => {
-*     if (typeof Umbra !== 'undefined' && Umbra.workspace) {
-*       // Automatically hide the Workspace sidebar
-*       Umbra.workspace.sidebar();
-*     } else {
-*       console.warn("Umbra.workspace is not available.");
-*     }
-*   })
-* })();
+(() => {
+  $(document).ready(() => {
+    if (typeof Umbra !== 'undefined' && Umbra.workspace) {
+      // Automatically hide the Workspace sidebar
+      Umbra.workspace.sidebar();
+    } else {
+      console.warn("Umbra.workspace is not available.");
+    }
+  })
+})();
 
 ```
 
