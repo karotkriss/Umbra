@@ -823,70 +823,6 @@ const Umbra = (function () {
 	};
 
 
-	// ----------------------------
-	// List
-	// ----------------------------
-	/**
-	 * Dynamic API to hide individual elements for the * list routes (list view).
-	 * 
-	 * @namespace Umbra.list
-	 * 
-	 */
-	const list = {
-		// ----------------------------
-		// List Sidebar
-		// ----------------------------
-		/**
-		 * Hides the list view sidebar.
-		 *
-		 * @param {Object} [props] - Configuration properties.
-		 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the list sidebar should be hidden
-		 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
-		 *        the sidebar will not be hidden.
-		 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
-		 *
-		 * @example
-		 * (() => {
-		 *   $(document).ready(() => {
-		 *     if (typeof Umbra !== 'undefined' && Umbra.list) {
-		 *       // Automatically hide the list view sidebar
-		 *       Umbra.list.sidebar();
-		 *     } else {
-		 *       console.warn("Umbra.list is not available.");
-		 *     }
-		 *   })
-		 * })();
-		 */
-		sidebar: function (props = {}) {
-			if (typeof props.conditional === "function") {
-				if (!props.conditional()) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.list.sidebar(): Conditional check returned false.");
-					return;
-				}
-			}
-			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
-				if (userHasRole(props.permissions)) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.list.sidebar(): User has bypass role, skipping hide.");
-					return;
-				}
-			}
-
-			const $sidebar = $('[data-page-route^="List"] .layout-side-section');
-			if (!$sidebar.length) {
-				if (props.debug && getEnvironment() === "development") {
-					console.warn("Umbra.list.sidebar(): List View sidebar not found.");
-					frappe.show_alert("List View sidebar not found.");
-				}
-				return;
-			}
-			$sidebar.css("cssText", "display: none !important;");
-
-			$("[data-page-route^='List'] button.sidebar-toggle-btn").css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development") console.debug("Umbra.list.sidebar(): List sidebar hidden.");
-		}
-	};
-
-
 	// Expose public API methods.
 	return {
 		actions: actions,
@@ -895,8 +831,7 @@ const Umbra = (function () {
 		sidebar: sidebar,
 		field: field,
 		section: section,
-		workspace: workspace,
-		list: list
+		workspace: workspace
 	};
 })();
 
