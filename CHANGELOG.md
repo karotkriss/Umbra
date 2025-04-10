@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.0] - 2025-04-10
+
+### Added
+- **List View Support**
+  - Introduced `Umbra.list.sidebar()` to hide the list view sidebar.
+
 ## [1.1.2] - 2025-04-10
 
 ### Fixed
