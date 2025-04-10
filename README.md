@@ -355,11 +355,13 @@ Hide Edit Workspace Edit by calling it in a [self-invoked function](https://sama
 ```javascript
 (() => {
   $(document).ready(() => {
-    // Automatically hide the Create Workspace button
-    Umbra.workspace.new();
-  } else {
-    console.warn("Umbra.workspace is not available.");
-  }
+    if (typeof Umbra !== 'undefined' && Umbra.workspace) {
+      // Automatically hide the Create Workspace button
+      Umbra.workspace.new();
+    } else {
+      console.warn("Umbra.workspace is not available.");
+    }
+  })
 })();
 
 ```
