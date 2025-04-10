@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2] - 2025-04-10
+
+### Fixed
+
+- Disable all logging in production environments
+
 ## [1.1.0] - 2025-03-19
 
 ### Added
