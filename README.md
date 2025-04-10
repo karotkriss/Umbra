@@ -44,6 +44,8 @@
     - [Workspace Sidebar](#workspace-sidebar)
     - [New Workspace Button](#new-workspace-button)
     - [Edit Workspace Button](#edit-workspace-button)
+  - [List View](#list-view)
+    - [List View Sidebar](#list-view-sidebar)
 - [Contributing](#contributing)
 <!-- - [API Reference](#api-reference) -->
 - [Contributing](#contributing)
@@ -358,6 +360,34 @@ Hide Edit Workspace Edit by calling it in a [self-invoked function](https://sama
   } else {
     console.warn("Umbra.workspace is not available.");
   }
+})();
+
+```
+
+
+### List View
+
+> <br>
+> :information_source:	The following functions are intended to be used in any one of your `app_included_js` files
+> <br>
+> <br>
+
+#### List View Sidebar
+```javascript
+Umbra.list.sidebar()
+```
+Hide List View sidebar by calling it in a [self-invoked function](https://samah-gaber.medium.com/self-invoking-functions-in-javascript-ea6ee39ba4d8)
+
+```javascript
+(() => {
+  $(document).ready(() => {
+    if (typeof Umbra !== 'undefined' && Umbra.list) {
+      // Automatically hide the list view sidebar
+      Umbra.list.sidebar();
+    } else {
+      console.warn("Umbra.list is not available.");
+    }
+  })
 })();
 
 ```
