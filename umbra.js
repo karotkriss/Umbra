@@ -26,6 +26,32 @@ const Umbra = (function () {
 		return false;
 	}
 
+	/**
+	 * Determines the current running environment.
+	 *
+	 * This function checks if Frappe's boot information is available to determine
+	 * if the application is running in development mode (using the developer_mode flag).
+	 * If that is not available, it falls back to checking the window's hostname for common
+	 * development hosts such as "localhost" or "127.0.0.1". If neither method provides a 
+	 * definitive answer, it defaults to "production".
+	 *
+	 * @private
+	 * @returns {string} Returns "development" if in a development environment, otherwise "production".
+	 */
+	const getEnvironment = () => {
+		// If Frappe boot is available, use its developer_mode flag.
+		if (typeof frappe !== 'undefined' && frappe.boot && typeof frappe.boot.developer_mode !== 'undefined') {
+			return frappe.boot.developer_mode ? 'development' : 'production';
+		}
+
+		if (typeof window !== 'undefined' && window.location && window.location.hostname) {
+			const devHosts = ['localhost', '127.0.0.1'];
+			return devHosts.includes(window.location.hostname) ? 'development' : 'production';
+		}
+
+		return 'production';
+	}
+
 	// ----------------------------
 	// Actions
 	// ----------------------------
@@ -167,7 +193,7 @@ const Umbra = (function () {
 			}
 			if (hideActivitySwitch) {
 				$(".show-all-activity").css("cssText", "display: none !important;");
-				if (debug) console.debug("Umbra.timeline: Hiding extra element with class 'show-all-activity'.");
+				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Hiding extra element with class 'show-all-activity'.");
 			}
 		}
 
@@ -175,12 +201,12 @@ const Umbra = (function () {
 		if (typeof props.conditional !== "undefined") {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (debug) console.debug("Umbra.timeline: Top-level conditional check returned false. Aborting timeline filtering.");
+					if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Top-level conditional check returned false. Aborting timeline filtering.");
 					processExtras();
 					return;
 				}
 			} else if (props.conditional === false) {
-				if (debug) console.debug("Umbra.timeline: Top-level conditional is false. Aborting timeline filtering.");
+				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Top-level conditional is false. Aborting timeline filtering.");
 				processExtras();
 				return;
 			}
@@ -191,7 +217,7 @@ const Umbra = (function () {
 			const $wrapper = $(".new-timeline");
 			if ($wrapper.length) {
 				$wrapper.hide();
-				if (debug) console.debug("Umbra.timeline: No filter provided. Hiding entire timeline container (.new-timeline).");
+				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: No filter provided. Hiding entire timeline container (.new-timeline).");
 			} else {
 				console.warn("Umbra.timeline: Timeline wrapper (.new-timeline) not found.");
 			}
@@ -204,7 +230,7 @@ const Umbra = (function () {
 			const $timelineContainer = $(".timeline-items");
 			if ($timelineContainer.length) {
 				$timelineContainer.find(".timeline-item").show();
-				if (debug) console.debug("Umbra.timeline: Filter set to all. Displaying all timeline items.");
+				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Filter set to all. Displaying all timeline items.");
 			} else {
 				console.warn("Umbra.timeline: Timeline container (.timeline-items) not found.");
 			}
@@ -219,7 +245,7 @@ const Umbra = (function () {
 			if (typeof communicationsFilter.conditional === "function") {
 				try {
 					if (!communicationsFilter.conditional()) {
-						if (debug) console.debug("Umbra.timeline: Communications filter conditional check returned false. Aborting timeline filtering.");
+						if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Communications filter conditional check returned false. Aborting timeline filtering.");
 						processExtras();
 						return;
 					}
@@ -238,7 +264,7 @@ const Umbra = (function () {
 			}
 
 			const $items = $timelineContainer.find(".timeline-item");
-			if (debug) console.debug(`Umbra.timeline: Found ${$items.length} timeline items.`);
+			if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Found ${$items.length} timeline items.`);
 			$items.hide();
 
 			const commItems = [];
@@ -256,10 +282,10 @@ const Umbra = (function () {
 					}
 				}
 			});
-			if (debug) console.debug(`Umbra.timeline: Found ${commItems.length} communication items.`);
+			if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Found ${commItems.length} communication items.`);
 
 			if (commItems.length === 0) {
-				if (debug) console.debug("Umbra.timeline: No communication items to process.");
+				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: No communication items to process.");
 				processExtras();
 				return;
 			}
@@ -267,7 +293,7 @@ const Umbra = (function () {
 			if (!userOnly) {
 				$.each(commItemMap, function (name, $elements) {
 					$elements.show();
-					if (debug) console.debug(`Umbra.timeline: Displaying communication ${name} (all communications shown).`);
+					if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Displaying communication ${name} (all communications shown).`);
 				});
 			} else {
 				frappe.call({
@@ -298,13 +324,13 @@ const Umbra = (function () {
 										}
 									}
 								} else {
-									if (debug) console.warn(`Umbra.timeline: Communication record not found for ${name}`);
+									if (debug && getEnvironment() === "development") console.warn(`Umbra.timeline: Communication record not found for ${name}`);
 								}
 								if (shouldDisplay) {
 									$elements.show();
-									if (debug) console.debug(`Umbra.timeline: Displaying communication ${name} for current user.`);
+									if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Displaying communication ${name} for current user.`);
 								} else {
-									if (debug) console.debug(`Umbra.timeline: Hiding communication ${name} not meant for current user.`);
+									if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Hiding communication ${name} not meant for current user.`);
 								}
 							});
 							processExtras();
@@ -324,7 +350,7 @@ const Umbra = (function () {
 			const $wrapper = $(".new-timeline");
 			if ($wrapper.length) {
 				$wrapper.hide();
-				if (debug) console.debug("Umbra.timeline: Unrecognized filter. Hiding entire timeline container (.new-timeline).");
+				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Unrecognized filter. Hiding entire timeline container (.new-timeline).");
 			} else {
 				console.warn("Umbra.timeline: Timeline wrapper (.new-timeline) not found.");
 			}
