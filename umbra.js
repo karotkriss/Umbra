@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.1.0
+ * @version 1.1.2
  *
  * @module Umbra
  */
@@ -94,7 +94,7 @@ const Umbra = (function () {
 		props = props || {};
 		if (typeof props.conditional === "function") {
 			if (!props.conditional(window.cur_frm)) {
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.actions(): Conditional check returned false for doctype ${doctype}`);
 				}
 				return;
@@ -102,7 +102,7 @@ const Umbra = (function () {
 		}
 		if (Array.isArray(props.permissions)) {
 			if (userHasRole(props.permissions)) {
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.actions(): User has bypass role, skipping hide for doctype ${doctype}`);
 				}
 				return;
@@ -110,7 +110,7 @@ const Umbra = (function () {
 		}
 
 		$(".actions-btn-group").css("cssText", "display: none !important;");
-		if (props.debug) {
+		if (props.debug && getEnvironment() === "development") {
 			console.debug(`Umbra.actions(): Actions hidden for doctype ${doctype}`);
 		}
 	}
@@ -394,7 +394,7 @@ const Umbra = (function () {
 		props = props || {};
 		if (typeof props.conditional === "function") {
 			if (!props.conditional(window.cur_frm)) {
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.comment(): Conditional check returned false for doctype ${doctype}`);
 				}
 				return;
@@ -402,14 +402,14 @@ const Umbra = (function () {
 		}
 		if (Array.isArray(props.permissions)) {
 			if (userHasRole(props.permissions)) {
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.comment(): User has bypass role, skipping comment hiding for doctype ${doctype}`);
 				}
 				return;
 			}
 		}
 		$(".comment-box").css("cssText", "display: none !important;");
-		if (props.debug) {
+		if (props.debug && getEnvironment() === "development") {
 			console.debug(`Umbra.comment(): Comment box hidden for doctype ${doctype}`);
 		}
 	}
@@ -456,7 +456,7 @@ const Umbra = (function () {
 
 		if (typeof props.conditional === "function") {
 			if (!props.conditional(window.cur_frm)) {
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.sidebar(): Conditional check returned false for doctype ${doctype}`);
 				}
 				return;
@@ -466,7 +466,7 @@ const Umbra = (function () {
 		// Check permissions; if the current user has any of the bypass roles, skip hiding.
 		if (Array.isArray(props.permissions)) {
 			if (userHasRole(props.permissions)) {
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.sidebar(): User has bypass role, skipping sidebar hiding for doctype ${doctype}`);
 				}
 				return;
@@ -475,7 +475,7 @@ const Umbra = (function () {
 
 		$(".layout-side-section:has(.form-sidebar)").css("cssText", "display: none !important;");
 		$("button.sidebar-toggle-btn").css("cssText", "display: none !important;");
-		if (props.debug) {
+		if (props.debug && getEnvironment() === "development") {
 			console.debug(`Umbra.sidebar(): Sidebar hidden for doctype ${doctype}`);
 		}
 	}
@@ -525,7 +525,7 @@ const Umbra = (function () {
 				// Check conditional prop
 				if (typeof props.conditional === "function") {
 					if (!props.conditional(window.cur_frm)) {
-						if (props.debug) {
+						if (props.debug && getEnvironment() === "development") {
 							console.debug(`Umbra.field.${fieldName}(): Top-level conditional check returned false.`);
 						}
 						return;
@@ -535,7 +535,7 @@ const Umbra = (function () {
 				// Check permissions prop: if user has any bypass role, skip hiding
 				if (Array.isArray(props.permissions)) {
 					if (userHasRole(props.permissions)) {
-						if (props.debug) {
+						if (props.debug && getEnvironment() === "development") {
 							console.debug(`Umbra.field.${fieldName}(): User has bypass role, skipping field hiding.`);
 						}
 						return;
@@ -564,7 +564,7 @@ const Umbra = (function () {
 				// Hide the field using Utils.hideFields.
 				Utils.hideFields({ fields: [fieldName] });
 
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.field.${fieldName}(): Field "${fieldName}" hidden.`);
 				}
 			};
@@ -613,14 +613,14 @@ const Umbra = (function () {
 				}
 				// Check conditional prop
 				if (typeof props.conditional === "function" && !props.conditional(window.cur_frm)) {
-					if (props.debug) {
+					if (props.debug && getEnvironment() === "development") {
 						console.debug(`Umbra.section.${sectionName}(): Top-level conditional check returned false.`);
 					}
 					return;
 				}
 				// Check permissions prop: if user has any bypass role, skip hiding
 				if (Array.isArray(props.permissions) && userHasRole(props.permissions)) {
-					if (props.debug) {
+					if (props.debug && getEnvironment() === "development") {
 						console.debug(`Umbra.section.${sectionName}(): User has bypass role, skipping section hiding.`);
 					}
 					return;
@@ -645,7 +645,7 @@ const Umbra = (function () {
 				}
 				// Hide the section using Utils.hideFields.
 				Utils.hideFields({ fields: [sectionName] });
-				if (props.debug) {
+				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.section.${sectionName}(): Section "${sectionName}" hidden.`);
 				}
 			};
@@ -688,14 +688,14 @@ const Umbra = (function () {
 		edit: function (props = {}) {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (props.debug) console.debug("Umbra.workspace.edit(): Conditional check returned false.");
+					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.edit(): Conditional check returned false.");
 					return;
 				}
 			}
 
 			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
 				if (userHasRole(props.permissions)) {
-					if (props.debug) console.debug("Umbra.workspace.edit(): User has bypass role, skipping hide.");
+					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.edit(): User has bypass role, skipping hide.");
 					return;
 				}
 			}
@@ -707,7 +707,7 @@ const Umbra = (function () {
 				return;
 			}
 			$btn.css("cssText", "display: none !important;");
-			if (props.debug) console.debug("Umbra.workspace.edit(): Edit workspace button hidden.");
+			if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.edit(): Edit workspace button hidden.");
 		},
 		// ----------------------------
 		// Edit Workspace Button
@@ -734,13 +734,13 @@ const Umbra = (function () {
 		new: function (props = {}) {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (props.debug) console.debug("Umbra.workspace.new(): Conditional check returned false.");
+					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.new(): Conditional check returned false.");
 					return;
 				}
 			}
 			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
 				if (userHasRole(props.permissions)) {
-					if (props.debug) console.debug("Umbra.workspace.new(): User has bypass role, skipping hide.");
+					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.new(): User has bypass role, skipping hide.");
 					return;
 				}
 			}
@@ -752,7 +752,7 @@ const Umbra = (function () {
 				return;
 			}
 			$btn.css("cssText", "display: none !important;");
-			if (props.debug) console.debug("Umbra.workspace.new(): Create workspace button hidden.");
+			if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.new(): Create workspace button hidden.");
 		},
 
 		// ----------------------------
@@ -782,13 +782,13 @@ const Umbra = (function () {
 		sidebar: function (props = {}) {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (props.debug) console.debug("Umbra.workspace.sidebar(): Conditional check returned false.");
+					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.sidebar(): Conditional check returned false.");
 					return;
 				}
 			}
 			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
 				if (userHasRole(props.permissions)) {
-					if (props.debug) console.debug("Umbra.workspace.sidebar(): User has bypass role, skipping hide.");
+					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.sidebar(): User has bypass role, skipping hide.");
 					return;
 				}
 			}
@@ -802,7 +802,7 @@ const Umbra = (function () {
 			$sidebar.css("cssText", "display: none !important;");
 
 			$("button.sidebar-toggle-btn").css("cssText", "display: none !important;");
-			if (props.debug) console.debug("Umbra.workspace.sidebar(): Workspace sidebar hidden.");
+			if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.sidebar(): Workspace sidebar hidden.");
 		}
 	};
 
