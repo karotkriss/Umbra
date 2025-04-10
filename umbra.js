@@ -88,7 +88,7 @@ const Umbra = (function () {
 		if (window.cur_frm && window.cur_frm.doctype) {
 			doctype = window.cur_frm.doctype;
 		} else {
-			console.warn("Umbra.actions(): No doctype specified and window.cur_frm is not available.");
+			if (props.debug && getEnvironment() === "development") console.warn("Umbra.actions(): No doctype specified and window.cur_frm is not available.");
 			return;
 		}
 		props = props || {};
@@ -335,12 +335,12 @@ const Umbra = (function () {
 							});
 							processExtras();
 						} else {
-							console.warn("Umbra.timeline: Error fetching communication records.");
+							if (debug && getEnvironment() === "development") console.warn("Umbra.timeline: Error fetching communication records.");
 							processExtras();
 						}
 					},
 					error: function (err) {
-						console.warn("Umbra.timeline: Error during frappe.call", err);
+						if (debug && getEnvironment() === "development") console.warn("Umbra.timeline: Error during frappe.call", err);
 						processExtras();
 					}
 				});
@@ -352,7 +352,7 @@ const Umbra = (function () {
 				$wrapper.hide();
 				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Unrecognized filter. Hiding entire timeline container (.new-timeline).");
 			} else {
-				console.warn("Umbra.timeline: Timeline wrapper (.new-timeline) not found.");
+				if (debug && getEnvironment() === "development") console.warn("Umbra.timeline: Timeline wrapper (.new-timeline) not found.");
 			}
 		}
 		processExtras();
@@ -387,7 +387,7 @@ const Umbra = (function () {
 		if (window.cur_frm && window.cur_frm.doctype) {
 			doctype = window.cur_frm.doctype;
 		} else {
-			console.warn("Umbra.comment(): No doctype specified and window.cur_frm is not available.");
+			if (props.debug && getEnvironment() === "development") console.warn("Umbra.comment(): No doctype specified and window.cur_frm is not available.");
 			return;
 		}
 
@@ -447,7 +447,7 @@ const Umbra = (function () {
 		if (window.cur_frm && window.cur_frm.doctype) {
 			doctype = window.cur_frm.doctype;
 		} else {
-			console.warn("Umbra.sidebar(): No doctype specified and window.cur_frm is not available.");
+			if (props.debug && getEnvironment() === "development") console.warn("Umbra.sidebar(): No doctype specified and window.cur_frm is not available.");
 			return;
 		}
 
@@ -517,8 +517,10 @@ const Umbra = (function () {
 			return function (props = {}) {
 				// Check if Utils is available
 				if (typeof Utils === 'undefined') {
-					console.warn("Umbra.field: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
-					frappe.show_alert("Utils module is missing. Please include Utils.js.");
+					if (props.debug && getEnvironment() === "development") {
+						console.warn("Umbra.field: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
+						frappe.show_alert("Utils module is missing. Please include Utils.js.");
+					}
 					return;
 				}
 
@@ -556,8 +558,10 @@ const Umbra = (function () {
 						return;
 					}
 				} else {
-					console.warn(`Umbra.field.${fieldName}(): Field not found in current form.`);
-					frappe.show_alert(`Field "${fieldName}" not found in current form.`);
+					if (props.debug && getEnvironment() === "development") {
+						console.warn(`Umbra.field.${fieldName}(): Field not found in current form.`);
+						frappe.show_alert(`Field "${fieldName}" not found in current form.`);
+					}
 					return;
 				}
 
@@ -607,8 +611,10 @@ const Umbra = (function () {
 			return function (props = {}) {
 				// Check if Utils is available
 				if (typeof Utils === 'undefined') {
-					console.warn("Umbra.section: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
-					frappe.show_alert("Utils module is missing. Please include Utils.js.");
+					if (props.debug && getEnvironment() === "development") {
+						console.warn("Umbra.section: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
+						frappe.show_alert("Utils module is missing. Please include Utils.js.");
+					}
 					return;
 				}
 				// Check conditional prop
@@ -631,16 +637,20 @@ const Umbra = (function () {
 					const fieldDef = frm.fields_dict[sectionName].df;
 					const fieldType = fieldDef.fieldtype;
 					if (fieldType !== "Section Break") {
-						console.warn(`Umbra.section.${sectionName}(): Field type "${fieldType}" is not a Section Break.`);
-						frappe.show_alert({
-							message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.section.`,
-							indicator: 'warning'
-						});
+						if (props.debug && getEnvironment() === "development") {
+							console.warn(`Umbra.section.${sectionName}(): Field type "${fieldType}" is not a Section Break.`);
+							frappe.show_alert({
+								message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.section.`,
+								indicator: 'warning'
+							});
+						}
 						return;
 					}
 				} else {
-					console.warn(`Umbra.section.${sectionName}(): Section not found in current form.`);
-					frappe.show_alert(`Section "${sectionName}" not found in current form.`);
+					if (props.debug && getEnvironment() === "development") {
+						console.warn(`Umbra.section.${sectionName}(): Section not found in current form.`);
+						frappe.show_alert(`Section "${sectionName}" not found in current form.`);
+					}
 					return;
 				}
 				// Hide the section using Utils.hideFields.
@@ -702,8 +712,10 @@ const Umbra = (function () {
 			// Hide the Edit Workspace button.
 			const $btn = $('[data-page-route=Workspaces] .workspace-footer').find('[data-label="Edit"]');
 			if (!$btn.length) {
-				console.warn("Umbra.workspace.edit(): Edit workspace button not found.");
-				frappe.show_alert("Edit workspace button not found.");
+				if (props.debug && getEnvironment() === "development") {
+					console.warn("Umbra.workspace.edit(): Edit workspace button not found.");
+					frappe.show_alert("Edit workspace button not found.");
+				}
 				return;
 			}
 			$btn.css("cssText", "display: none !important;");
@@ -747,8 +759,10 @@ const Umbra = (function () {
 
 			const $btn = $('[data-page-route=Workspaces] .workspace-footer').find('[data-label="New"]');
 			if (!$btn.length) {
-				console.warn("Umbra.workspace.new(): Create workspace button not found.");
-				frappe.show_alert("Create workspace button not found.");
+				if (props.debug && getEnvironment() === "development") {
+					console.warn("Umbra.workspace.new(): Create workspace button not found.");
+					frappe.show_alert("Create workspace button not found.");
+				}
 				return;
 			}
 			$btn.css("cssText", "display: none !important;");
@@ -795,8 +809,10 @@ const Umbra = (function () {
 
 			const $sidebar = $('[data-page-route=Workspaces] .layout-side-section');
 			if (!$sidebar.length) {
-				console.warn("Umbra.workspace.sidebar(): Workspace sidebar not found.");
-				frappe.show_alert("Workspace sidebar not found.");
+				if (props.debug && getEnvironment() === "development") {
+					console.warn("Umbra.workspace.sidebar(): Workspace sidebar not found.");
+					frappe.show_alert("Workspace sidebar not found.");
+				}
 				return;
 			}
 			$sidebar.css("cssText", "display: none !important;");
