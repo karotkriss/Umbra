@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.2.0
+ * @version 1.3.0
  *
  * @module Umbra
  */
@@ -525,13 +525,11 @@ const Umbra = (function () {
 				}
 
 				// Check conditional prop
-				if (typeof props.conditional === "function") {
-					if (!props.conditional(window.cur_frm)) {
-						if (props.debug && getEnvironment() === "development") {
-							console.debug(`Umbra.field.${fieldName}(): Top-level conditional check returned false.`);
-						}
-						return;
+				if (typeof props.conditional !== "function") {
+					if (props.debug && getEnvironment() === "development") {
+						console.debug(`Umbra.field.${fieldName}(): 'conditional' must be a function.`);
 					}
+					return;
 				}
 
 				// Check permissions prop: if user has any bypass role, skip hiding
@@ -566,7 +564,7 @@ const Umbra = (function () {
 				}
 
 				// Hide the field using Utils.hideFields.
-				Utils.hideFields({ fields: [fieldName] });
+				Utils.hideFields({ fields: [fieldName], conditional: props.conditional, debug: props.debug });
 
 				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.field.${fieldName}(): Field "${fieldName}" hidden.`);
@@ -618,9 +616,9 @@ const Umbra = (function () {
 					return;
 				}
 				// Check conditional prop
-				if (typeof props.conditional === "function" && !props.conditional(window.cur_frm)) {
+				if (typeof props.conditional !== "function") {
 					if (props.debug && getEnvironment() === "development") {
-						console.debug(`Umbra.section.${sectionName}(): Top-level conditional check returned false.`);
+						console.debug(`Umbra.section.${sectionName}(): 'conditional' must be a function.`);
 					}
 					return;
 				}
@@ -654,7 +652,7 @@ const Umbra = (function () {
 					return;
 				}
 				// Hide the section using Utils.hideFields.
-				Utils.hideFields({ fields: [sectionName] });
+				Utils.hideFields({ fields: [sectionName], conditional: props.conditional, debug: props.debug });
 				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.section.${sectionName}(): Section "${sectionName}" hidden.`);
 				}
