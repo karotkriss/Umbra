@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.3.0
+ * @version 1.4.0
  *
  * @module Umbra
  */
@@ -92,14 +92,15 @@ const Umbra = (function () {
 			return;
 		}
 		props = props || {};
-		if (typeof props.conditional === "function") {
-			if (!props.conditional(window.cur_frm)) {
-				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.actions(): Conditional check returned false for doctype ${doctype}`);
-				}
-				return;
+
+		const { conditional } = props
+		if (typeof conditional !== 'undefined' && typeof conditional !== "function") {
+			if (props.debug && getEnvironment() === "development") {
+				console.debug(`Umbra.action(): 'conditional' must be a function.`);
 			}
+			return;
 		}
+
 		if (Array.isArray(props.permissions)) {
 			if (userHasRole(props.permissions)) {
 				if (props.debug && getEnvironment() === "development") {
@@ -109,9 +110,18 @@ const Umbra = (function () {
 			}
 		}
 
-		$(".actions-btn-group").css("cssText", "display: none !important;");
-		if (props.debug && getEnvironment() === "development") {
-			console.debug(`Umbra.actions(): Actions hidden for doctype ${doctype}`);
+		if (typeof conditional !== 'undefined') {
+			$(".actions-btn-group").css("cssText", `display: ${!conditional(window.cur_frm) ? 'block' : 'none'} !important;`);
+			if (!conditional(window.cur_frm)) {
+				if (props.debug && getEnvironment() === "development") {
+					console.debug(`Umbra.actions(): Conditional check returned false for doctype ${doctype}`);
+				}
+			}
+		} else {
+			$(".actions-btn-group").css("cssText", "display: none !important;");
+			if (props.debug && getEnvironment() === "development") {
+				console.debug(`Umbra.actions(): Actions hidden for doctype ${doctype}`);
+			}
 		}
 	}
 
