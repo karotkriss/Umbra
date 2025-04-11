@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.1.2
+ * @version 1.3.0
  *
  * @module Umbra
  */
