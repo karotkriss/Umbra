@@ -560,7 +560,7 @@ const Umbra = (function () {
 				}
 
 				// Hide the field using Utils.hideFields.
-				Utils.hideFields({ fields: [fieldName], conditional: props.conditional(window.cur_frm), debug: props.debug });
+				Utils.hideFields({ fields: [fieldName], conditional: props.conditional, debug: props.debug });
 
 				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.field.${fieldName}(): Field "${fieldName}" hidden.`);
@@ -642,7 +642,7 @@ const Umbra = (function () {
 					return;
 				}
 				// Hide the section using Utils.hideFields.
-				Utils.hideFields({ fields: [sectionName], conditional: props.conditional(window.cur_frm), debug: props.debug });
+				Utils.hideFields({ fields: [sectionName], conditional: props.conditional, debug: props.debug });
 				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.section.${sectionName}(): Section "${sectionName}" hidden.`);
 				}
