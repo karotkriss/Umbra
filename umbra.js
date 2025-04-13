@@ -94,7 +94,7 @@ const Umbra = (function () {
 		props = props || {};
 
 		const { conditional } = props
-		if (typeof conditional !== 'undefined' && typeof conditional !== "function") {
+		if (typeof conditional !== 'undefined' && typeof props.conditional !== "function") {
 			if (props.debug && getEnvironment() === "development") {
 				console.debug(`Umbra.action(): 'conditional' must be a function.`);
 			}
@@ -111,17 +111,18 @@ const Umbra = (function () {
 		}
 
 		if (typeof conditional !== 'undefined') {
-			$(".actions-btn-group").css("cssText", `display: ${!conditional(window.cur_frm) ? 'block' : 'none'} !important;`);
-			if (!conditional(window.cur_frm)) {
+			$(".actions-btn-group").css("cssText", `display: ${!conditional(window.cur_frm) ? 'block' : 'none'}`);
+			if (!props.conditional(window.cur_frm)) {
 				if (props.debug && getEnvironment() === "development") {
 					console.debug(`Umbra.actions(): Conditional check returned false for doctype ${doctype}`);
 				}
 			}
 		} else {
-			$(".actions-btn-group").css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development") {
-				console.debug(`Umbra.actions(): Actions hidden for doctype ${doctype}`);
-			}
+			$(".actions-btn-group").css("cssText", "display: none");
+		}
+
+		if (props.debug && getEnvironment() === "development") {
+			console.debug(`Umbra.actions(): Actions hidden for doctype ${doctype}`);
 		}
 	}
 
