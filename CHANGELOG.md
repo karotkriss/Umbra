@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.0] - 2025-04-10
+
+### Added
+- **Support for multiple sections in one call**
+  - Introduced `Umbra.sections()` for hiding multiple sections.
+
 ## [1.4.1] - 2025-04-11
 
 ### Added
