@@ -672,6 +672,66 @@ const Umbra = (function () {
 	})
 
 	// ----------------------------
+	// Form Sections
+	// ----------------------------
+	/**
+	 * Hides specified sections on a frappe form.
+	 *
+	 * If the conditional returns false or the user has any of the bypass roles (permissions), no action is taken.
+	 * Otherwise, the hides are hidden.
+	 *
+	 * @param {Object} props - Configuration object for hiding sections.
+	 * @param {string[]} props.sections - The sections to hide. Provide multiple section names as an array.
+	 * @param {Function} [props.conditional] - Optional flag to enable conditional hiding logic.
+	 * @param {string[]} [props.permissions] - Optional array of role names; if the user has any of these roles, section hiding will be bypassed.
+	 * @param {boolean} [props.debug=false] - Optional flag to enable debug logging.
+	 *
+	 * @example
+	 * // Hide multiple sections "header" and "footer" with conditional logic
+	 * Umbra.sections({ sections: ["header", "footer"], conditional: () => { return frm.doc.workflow_state !== Submitted }, debug: true });
+	 *
+	 * @returns {void}
+	 */
+	const sections = (props = {}) => {
+		const { sections, conditional = () => { return true }, permissions, debug } = props
+
+		if (typeof Utils === 'undefined') {
+			if (debug && getEnvironment() === "development") {
+				console.warn("Umbra.sections: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
+				frappe.show_alert("Utils module is missing. Please include Utils.js.");
+			}
+			return;
+		}
+
+		if (!props || typeof props !== "object") {
+			if (debug && getEnvironment() === "development") console.error("Umbra.sections expects an object as an argument.");
+			return;
+		}
+
+		if (Array.isArray(permissions) && userHasRole(permissions)) {
+			if (debug && getEnvironment() === "development") {
+				console.debug(`Umbra.sections(): User has bypass role, skipping section hiding.`);
+			}
+			return;
+		}
+
+
+		if (typeof conditional !== "function") {
+			if (debug && getEnvironment() === "development") {
+				console.debug(`Umbra.sections(): 'conditional' must be a function.`);
+			}
+			return;
+		}
+
+		frappe.utilsPlus.hideFields({
+			fields: sections,
+			conditional: conditional,
+			debug: debug
+		});
+	};
+
+
+	// ----------------------------
 	// Workspace
 	// ----------------------------
 	/**
@@ -904,6 +964,7 @@ const Umbra = (function () {
 		sidebar: sidebar,
 		field: field,
 		section: section,
+		sections: sections,
 		workspace: workspace,
 		list: list
 	};
