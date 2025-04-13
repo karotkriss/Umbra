@@ -5,7 +5,7 @@
 ### Added
 
 - **Fixed**
-- patched conditional fucntion run logic for hiding `actions`
+- patched conditional function run logic for hiding `actions`
 
 ## [1.4.0] - 2025-04-11
 
