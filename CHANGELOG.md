@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.5.0] - 2025-04-10
+## [1.5.0] - 2025-04-13
 
 ### Added
 - **Support for multiple sections in one call**
