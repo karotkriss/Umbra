@@ -378,19 +378,19 @@ Hide Edit Workspace Edit by calling it in a [self-invoked function](https://sama
 ```javascript
 Umbra.list.sidebar()
 ```
-Hide List View sidebar by calling it in a [self-invoked function](https://samah-gaber.medium.com/self-invoking-functions-in-javascript-ea6ee39ba4d8)
+Hide List View sidebar
 
 ```javascript
-(() => {
-  $(document).ready(() => {
+frappe.listview_settings['Your DocType'] = {
+  onload(listview) {
     if (typeof Umbra !== 'undefined' && Umbra.list) {
       // Automatically hide the list view sidebar
       Umbra.list.sidebar();
     } else {
       console.warn("Umbra.list is not available.");
     }
-  })
-})();
+  }
+}
 
 ```
 <!-- ---
