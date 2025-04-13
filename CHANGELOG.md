@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1] - 2025-04-11
+
+### Added
+
+- **Fixed**
+- patched conditional function run logic for hiding `actions`
+
 ## [1.4.0] - 2025-04-11
 
 ### Added
