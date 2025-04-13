@@ -40,6 +40,8 @@
   - [Sidebar](#sidebar)
   - [Form Fields](#form-fields)
   - [Form Sections](#form-sections)
+    - [Hiding a One Off Section](#hiding-a-one-off-section)
+    - [Hiding Multiple Sections](#hiding-multiple-sections)
   - [Workspace](#workspace)
     - [Workspace Sidebar](#workspace-sidebar)
     - [New Workspace Button](#new-workspace-button)
@@ -274,7 +276,7 @@ and the current user is not a System Manager.
 
 ```javascript
 Umbra.field.my_field({
-  conditional: (cur_frm) { return cur_frm.doc.status === "Draft"; },
+  conditional: (cur_frm) => { return cur_frm.doc.status === "Draft"; },
   permissions: ["System Manager"],
   debug: true
 });
@@ -282,6 +284,7 @@ Umbra.field.my_field({
 ```
 ### Form Sections
 
+#### Hiding a One Off Section
 ```javascript
 Umbra.section.name_of_desired_section()
 ```
@@ -291,7 +294,24 @@ and the current user is not a System Manager.
 
 ```javascript
 Umbra.section.my_section({
-  conditional: (cur_frm) { return cur_frm.doc.status === "Draft"; },
+  conditional: (cur_frm) => { return cur_frm.doc.status === "Draft"; },
+  permissions: ["System Manager"],
+  debug: true
+});
+
+```
+#### Hiding Multiple Sections
+```javascript
+Umbra.sections({ sections: ['section_break_nmki', 'section_break_3ki7'] })
+```
+
+Hide sections if the document status is 'Draft'
+and the current user is not a System Manager.
+
+```javascript
+Umbra.sections({
+  sections: ['section_break_nmki', 'section_break_3ki7'],
+  conditional: (cur_frm) => { return cur_frm.doc.status === "Draft"; },
   permissions: ["System Manager"],
   debug: true
 });
