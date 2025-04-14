@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.5.1
+ * @version 1.6.0
  *
  * @module Umbra
  */
@@ -589,6 +589,65 @@ const Umbra = (function () {
 	})
 
 	// ----------------------------
+	// Form Fields
+	// ----------------------------
+	/**
+	 * Hides specified Fields on a frappe form.
+	 *
+	 * If the conditional returns false or the user has any of the bypass roles (permissions), no action is taken.
+	 * Otherwise, the hides are hidden.
+	 *
+	 * @param {Object} props - Configuration object for hiding fields.
+	 * @param {string[]} props.fields - The fields to hide. Provide multiple fields names as an array.
+	 * @param {Function} [props.conditional] - Optional flag to enable conditional hiding logic.
+	 * @param {string[]} [props.permissions] - Optional array of role names; if the user has any of these roles, field hiding will be bypassed.
+	 * @param {boolean} [props.debug=false] - Optional flag to enable debug logging.
+	 *
+	 * @example
+	 * // Hide multiple fields "middle_name" and "salary" with conditional logic
+	 * Umbra.fields({ fields: ["middle_name", "salary"], conditional: (frm) => { return frappe.session.user !== frm.doc.owner }, debug: true });
+	 *
+	 * @returns {void}
+	 */
+	const fields = (props = {}) => {
+		const { fields, conditional = () => { return true }, permissions, debug } = props
+
+		if (typeof Utils === 'undefined') {
+			if (debug && getEnvironment() === "development") {
+				console.warn("Umbra.fields: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
+				frappe.show_alert("Utils module is missing. Please include Utils.js.");
+			}
+			return;
+		}
+
+		if (!props || typeof props !== "object") {
+			if (debug && getEnvironment() === "development") console.error("Umbra.fields expects an object as an argument.");
+			return;
+		}
+
+		if (Array.isArray(permissions) && userHasRole(permissions)) {
+			if (debug && getEnvironment() === "development") {
+				console.debug(`Umbra.fields(): User has bypass role, skipping section hiding.`);
+			}
+			return;
+		}
+
+
+		if (typeof conditional !== "function") {
+			if (debug && getEnvironment() === "development") {
+				console.debug(`Umbra.fields(): 'conditional' must be a function.`);
+			}
+			return;
+		}
+
+		frappe.utilsPlus.hideFields({
+			fields: fields,
+			conditional: conditional,
+			debug: debug
+		});
+	};
+
+	// ----------------------------
 	// Form Section
 	// ----------------------------
 	/**
@@ -972,6 +1031,7 @@ const Umbra = (function () {
 		comment: comment,
 		sidebar: sidebar,
 		field: field,
+		fields: fields,
 		section: section,
 		sections: sections,
 		workspace: workspace,

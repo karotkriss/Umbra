@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.6.0] - 2025-04-13
+
+### Added
+- **Support for multiple fields in one call**
+  - Introduced `Umbra.fields()` for hiding multiple sections.
+
 ## [1.5.1] - 2025-04-13
 
 ### Fixed
