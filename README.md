@@ -39,8 +39,10 @@
   - [Comment Box](#comment-box)
   - [Sidebar](#sidebar)
   - [Form Fields](#form-fields)
+    - [Hiding a Specific Field](#hiding-a-specific-field)
+    - [Hiding Multiple Fields](#hiding-multiple-fields)
   - [Form Sections](#form-sections)
-    - [Hiding a One Off Section](#hiding-a-one-off-section)
+    - [Hiding Specific Section](#hiding-specific-section)
     - [Hiding Multiple Sections](#hiding-multiple-sections)
   - [Workspace](#workspace)
     - [Workspace Sidebar](#workspace-sidebar)
@@ -267,6 +269,7 @@ frappe.ui.form.on('YourDoctype', {
 
 ### Form Fields
 
+#### Hiding a Specific Field
 ```javascript
 Umbra.field.name_of_desired_field()
 ```
@@ -282,9 +285,29 @@ Umbra.field.my_field({
 });
 
 ```
+
+#### Hiding Multiple Fields
+```javascript
+Umbra.fields({ fields: ["middle_name", "salary"] });
+```
+
+Hide multiple fields "middle_name" and "salary" with conditional logic
+and the current user is not the owner/creator of the form.
+
+```javascript
+Umbra.fields({
+  fields: ["middle_name", "salary"],
+  conditional: (frm) => {
+    return frappe.session.user !== frm.doc.owner
+  },
+  debug: true
+});
+
+```
+
 ### Form Sections
 
-#### Hiding a One Off Section
+#### Hiding Specific Section
 ```javascript
 Umbra.section.name_of_desired_section()
 ```
