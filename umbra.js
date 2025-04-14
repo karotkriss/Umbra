@@ -595,7 +595,7 @@ const Umbra = (function () {
 	 * Hides specified Fields on a frappe form.
 	 *
 	 * If the conditional returns false or the user has any of the bypass roles (permissions), no action is taken.
-	 * Otherwise, the hides are hidden.
+	 * Otherwise, the fields are hidden.
 	 *
 	 * @param {Object} props - Configuration object for hiding fields.
 	 * @param {string[]} props.fields - The fields to hide. Provide multiple fields names as an array.
@@ -746,7 +746,7 @@ const Umbra = (function () {
 	 * Hides specified sections on a frappe form.
 	 *
 	 * If the conditional returns false or the user has any of the bypass roles (permissions), no action is taken.
-	 * Otherwise, the hides are hidden.
+	 * Otherwise, the sections are hidden.
 	 *
 	 * @param {Object} props - Configuration object for hiding sections.
 	 * @param {string[]} props.sections - The sections to hide. Provide multiple section names as an array.
