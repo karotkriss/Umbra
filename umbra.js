@@ -620,14 +620,14 @@ const Umbra = (function () {
 			return;
 		}
 
-		if (!props || typeof props !== "object") {
-			if (debug && getEnvironment() === "development") console.error("Umbra.fields expects an object as an argument.");
+		if (!fields || !Array.isArray(fields)) {
+			if (debug && getEnvironment() === "development") console.error("Umbra.fields expects 'fields' to be an array.");
 			return;
 		}
 
 		if (Array.isArray(permissions) && userHasRole(permissions)) {
 			if (debug && getEnvironment() === "development") {
-				console.debug(`Umbra.fields(): User has bypass role, skipping section hiding.`);
+				console.debug(`Umbra.fields(): User has bypass role, skipping field hiding.`);
 			}
 			return;
 		}
