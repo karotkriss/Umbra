@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.5.0
+ * @version 1.5.1
  *
  * @module Umbra
  */
@@ -535,6 +535,10 @@ const Umbra = (function () {
 					return;
 				}
 
+				if (!props.conditional) {
+					props.conditional = () => { return true }
+				}
+
 				// Check conditional prop
 				if (typeof props.conditional !== "function") {
 					if (props.debug && getEnvironment() === "development") {
@@ -626,6 +630,11 @@ const Umbra = (function () {
 					}
 					return;
 				}
+
+				if (!conditional) {
+					props.conditional = () => { return true }
+				}
+
 				// Check conditional prop
 				if (typeof props.conditional !== "function") {
 					if (props.debug && getEnvironment() === "development") {

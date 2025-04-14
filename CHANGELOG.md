@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1] - 2025-04-13
+
+### Fixed
+- **Conditional Prop is now optional when hiding `section` and `field`**
+  - fixed logical error that made conditional prop mandatory
+
 ## [1.5.0] - 2025-04-13
 
 ### Added
