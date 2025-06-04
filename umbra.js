@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  * 
- * @version 1.6.0
+ * @version 1.7.0
  *
  * @module Umbra
  */
@@ -1024,6 +1024,115 @@ const Umbra = (function () {
 	};
 
 
+	// ----------------------------
+	// table
+	// ----------------------------
+	/**
+	 * Dynamic API to hide elements for child tables.
+	 * 
+	 * @namespace Umbra.table
+	 * 
+	 */
+	const table = {
+		/**
+		 * Hide elements within child table form view.
+		 * 
+		 */
+		form: {
+			// ----------------------------
+			// Table Controls
+			// ----------------------------
+			/**
+			 * Hides the controls for table form view.
+			 *
+			 * @param {Object} [props] - Configuration properties.
+			 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the controls should be hidden
+			 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
+			 *        the controls will not be hidden.
+			 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+			 *
+			 * @example
+			 * // Hide table controls for the department child table in the Business Doctype
+			 * frappe.ui.form.on('Business', {
+			 *   department_on_form_rendered: () => {
+			 *     Umbra.table.controls();
+			 *   }
+			 */
+			controls: function (props = {}) {
+				if (typeof props.conditional === "function") {
+					if (!props.conditional()) {
+						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.controls(): Conditional check returned false.");
+						return;
+					}
+				}
+				if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+					if (userHasRole(props.permissions)) {
+						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.controls: User has bypass role, skipping hide.");
+						return;
+					}
+				}
+
+				const $controls = $('span.row-actions').find('button').not('button.grid-delete-row').not('button.grid-collapse-row');
+
+				if (!$controls.length) {
+					if (props.debug && getEnvironment() === "development") {
+						console.warn("Umbra.table.controls(): Umbra.table.controls.");
+					}
+					return;
+				}
+
+				$controls.each((index, control) => {
+					$(control).hide()
+				})
+			},
+			// ----------------------------
+			// Table Shortcuts
+			// ----------------------------
+			/**
+			 * Hides the shortcut guide for table form view.
+			 *
+			 * @param {Object} [props] - Configuration properties.
+			 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the shortcuts should be hidden
+			 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
+			 *        the shortcuts will not be hidden.
+			 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+			 *
+			 * @example
+			 * // Hide table shortcuts for the department child table in the Business Doctype
+			 * frappe.ui.form.on('Business', {
+			 *   department_on_form_rendered: () => {
+			 *     Umbra.table.shortcuts();
+			 *   }
+			 */
+			shortcuts: function (props = {}) {
+				if (typeof props.conditional === "function") {
+					if (!props.conditional()) {
+						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.shortcuts(): Conditional check returned false.");
+						return;
+					}
+				}
+				if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+					if (userHasRole(props.permissions)) {
+						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.shortcuts(): User has bypass role, skipping hide.");
+						return;
+					}
+				}
+
+				const $shortcuts = $('div.grid-footer-toolbar');
+
+				if (!$shortcuts.length) {
+					if (props.debug && getEnvironment() === "development") {
+						console.warn("Umbra.table.shortcuts(): Table shortcuts not found.");
+					}
+					return;
+				}
+
+				$shortcuts.hide();
+			},
+		}
+	};
+
+
 	// Expose public API methods.
 	return {
 		actions: actions,
@@ -1035,7 +1144,8 @@ const Umbra = (function () {
 		section: section,
 		sections: sections,
 		workspace: workspace,
-		list: list
+		list: list,
+		table: table
 	};
 })();
 
