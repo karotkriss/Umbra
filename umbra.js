@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  *
- * @version 1.8.0
+ * @version 1.9.0
  *
  * @module Umbra
  */
@@ -1584,6 +1584,147 @@ const Umbra = (function () {
 		},
 	};
 
+	/**
+	 * Desktop namespace for hiding Frappe /desk route UI elements.
+	 * Targets navbar, search bar, sidebar icons, and edit controls.
+	 *
+	 * @namespace desktop
+	 */
+	const desktop = {
+		/**
+		 * Hides a specific desktop/sidebar icon by its name.
+		 *
+		 * @param {Object} props - Configuration object.
+		 * @param {string} props.icon - The icon label/name (data-id attribute).
+		 * @param {boolean} [props.debug=false] - Enable debug logging.
+		 * @example
+		 * Umbra.desktop.icon({ icon: "Settings" });
+		 * Umbra.desktop.icon({ icon: "Framework", debug: true });
+		 */
+		icon: function (props) {
+			const config = props || {};
+			const debug = config.debug && getEnvironment() === "development";
+			const icon = config.icon;
+
+			if (debug)
+				console.log("Umbra.desktop.icon(): Starting with props", props);
+
+			if (!icon) {
+				if (debug)
+					console.log("Umbra.desktop.icon(): No icon provided.");
+				return;
+			}
+
+			const $icon = $(".desktop-wrapper .icons").find(
+				`[data-id="${icon}"]`,
+			);
+
+			if (debug)
+				console.log(
+					`Umbra.desktop.icon(): Found ${$icon.length} icon(s) with name "${icon}"`,
+				);
+
+			if ($icon.length) {
+				$icon.hide();
+				if (debug)
+					console.log(`Umbra.desktop.icon(): Hidden icon "${icon}"`);
+			}
+		},
+
+		/**
+		 * Hides the search bar on the /desk page.
+		 *
+		 * @param {Object} [props] - Configuration object.
+		 * @param {boolean} [props.debug=false] - Enable debug logging.
+		 * @example
+		 * Umbra.desktop.searchBar();
+		 * Umbra.desktop.searchBar({ debug: true });
+		 */
+		searchBar: function (props) {
+			const config = props || {};
+			const debug = config.debug && getEnvironment() === "development";
+
+			if (debug)
+				console.log(
+					"Umbra.desktop.searchBar(): Starting with props",
+					props,
+				);
+
+			const $searchBar = $(
+				"div.desktop-wrapper > header.navbar > div.search-bar",
+			);
+
+			if (debug)
+				console.log("Umbra.desktop.searchBar(): Found search bar");
+
+			if ($searchBar.length) {
+				$searchBar.hide();
+				if (debug)
+					console.log("Umbra.desktop.searchBar(): Hidden search bar");
+			}
+		},
+
+		/**
+		 * Hides the sidebar edit button (ellipsis menu) on the /desk page.
+		 *
+		 * @param {Object} [props] - Configuration object.
+		 * @param {boolean} [props.debug=false] - Enable debug logging.
+		 * @example
+		 * Umbra.desktop.edit();
+		 * Umbra.desktop.edit({ debug: true });
+		 */
+		edit: function (props) {
+			const config = props || {};
+			const debug = config.debug && getEnvironment() === "development";
+
+			if (debug)
+				console.log("Umbra.desktop.edit(): Starting with props", props);
+
+			const $editBtn = $("button.desktop-edit");
+
+			if (debug)
+				console.log("Umbra.desktop.edit(): Found desktop edit button");
+
+			if ($editBtn.length) {
+				$editBtn.remove();
+				if (debug)
+					console.log("Umbra.desktop.edit(): Removed edit button");
+			}
+		},
+
+		/**
+		 * Hides the entire top navigation bar on the /desk page.
+		 *
+		 * @param {Object} [props] - Configuration object.
+		 * @param {boolean} [props.debug=false] - Enable debug logging.
+		 * @example
+		 * Umbra.desktop.navbar();
+		 * Umbra.desktop.navbar({ debug: true });
+		 */
+		navbar: function (props) {
+			const config = props || {};
+			const debug = config.debug && getEnvironment() === "development";
+
+			if (debug)
+				console.log(
+					"Umbra.desktop.navbar(): Starting with props",
+					props,
+				);
+
+			const $navbar = $("div.desktop-wrapper > header.navbar");
+
+			if (debug)
+				console.log(
+					`Umbra.desktop.navbar(): Found ${$navbar.length} navbar element(s)`,
+				);
+
+			if ($navbar.length) {
+				$navbar.hide();
+				if (debug) console.log("Umbra.desktop.navbar(): Hidden navbar");
+			}
+		},
+	};
+
 	// Expose public API methods.
 	return {
 		actions: actions,
@@ -1597,6 +1738,7 @@ const Umbra = (function () {
 		workspace: workspace,
 		list: list,
 		table: table,
+		desktop: desktop,
 	};
 })();
 
