@@ -344,6 +344,8 @@ frappe.ui.form.on('YourDoctype', {
 
 > :information_source: The following functions are intended to be used in any one of your `app_included_js` files that load on workspace pages. They typically run inside a `$(document).ready()` or similar DOM ready check.
 
+> **Frappe v16 Support**: All workspace methods automatically detect and adapt to Frappe v16's UI changes. You can manually override version detection using the `v16: true` or `v16: false` prop.
+
 #### Workspace Sidebar
 ```javascript
 Umbra.workspace.sidebar({ /* props */ })
@@ -356,6 +358,7 @@ $(document).ready(() => {
         Umbra.workspace.sidebar({
             // conditional: () => !frappe.user.has_role("Workspace Manager"), // Example
             permissions: ["Administrator"], // Bypasses for Admin
+            v16: true, // Optional: Manually specify Frappe v16 mode (auto-detected by default)
             debug: true
         });
     }
@@ -373,6 +376,7 @@ $(document).ready(() => {
     if (frappe.get_route_str().startsWith("app/workspace")) {
         Umbra.workspace.new({
             permissions: ["Workspace User"], // Only non "Workspace User" will have it hidden
+            v16: true, // Optional: Manually specify Frappe v16 mode (auto-detected by default)
             debug: true
         });
     }
@@ -396,6 +400,7 @@ $(document).ready(() => {
                 return $('.page-title-text[data-original-title="Public Workspace"]').length > 0;
             },
             permissions: ["System Manager"],
+            v16: true, // Optional: Manually specify Frappe v16 mode (auto-detected by default)
             debug: true
         });
     }

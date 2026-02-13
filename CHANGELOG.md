@@ -1,6 +1,25 @@
 # Changelog
 
 
+## [1.8.0] - 2026-02-13
+### Added
+- **Frappe v16 Support:**
+  - Added `getFrappeVersion()` utility to detect Frappe version
+  - Added `isV16()` helper to check for Frappe v16+
+  - Updated `Umbra.workspace.edit()` with v16-specific ellipsis button handling
+  - Updated `Umbra.workspace.new()` with v16-specific ellipsis button handling
+  - Updated `Umbra.workspace.sidebar()` with v16-specific sidebar structure support
+  - All workspace methods now support optional `v16` prop to manually override version detection
+
+### Fixed
+- **Section API Bug Fixes:**
+  - Fixed undefined variable reference in `Umbra.section` conditional check (line 911: `conditional` → `props.conditional`)
+  - Fixed incorrect variable name in `Umbra.section` error message (line 956: `fieldName` → `sectionName`)
+
+### Changed
+- **Code Quality:**
+  - Improved code formatting and consistency (quote standardization, line breaks for readability)
+
 ## [1.7.0] - 2025-06-03
 ### Added
 - **Child Table Support:** Introduced `Umbra.table.form` namespace to manage UI elements in child table row forms.

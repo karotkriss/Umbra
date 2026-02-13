@@ -4,7 +4,7 @@
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
  *
- * @version 1.7.0
+ * @version 1.8.0
  *
  * @module Umbra
  */
@@ -60,6 +60,40 @@ const Umbra = (function () {
 		}
 
 		return "production";
+	};
+
+	/**
+	 * Detects the major Frappe version.
+	 *
+	 * @private
+	 * @returns {number} The major version number (e.g., 15, 16), or 0 if unable to detect.
+	 */
+	const getFrappeVersion = () => {
+		try {
+			if (
+				typeof frappe !== "undefined" &&
+				frappe.boot?.versions?.frappe
+			) {
+				const majorVersion = parseInt(
+					frappe.boot.versions.frappe.split(".")[0],
+					10,
+				);
+				return isNaN(majorVersion) ? 0 : majorVersion;
+			}
+		} catch (e) {
+			console.warn("Umbra: Unable to detect Frappe version", e);
+		}
+		return 0;
+	};
+
+	/**
+	 * Checks if running on Frappe v16 or later.
+	 *
+	 * @private
+	 * @returns {boolean} True if v16+, false otherwise.
+	 */
+	const isV16 = () => {
+		return getFrappeVersion() >= 16;
 	};
 
 	// ----------------------------
@@ -874,7 +908,7 @@ const Umbra = (function () {
 						return;
 					}
 
-					if (!conditional) {
+					if (!props.conditional) {
 						props.conditional = () => {
 							return true;
 						};
@@ -919,7 +953,7 @@ const Umbra = (function () {
 									`Umbra.section.${sectionName}(): Field type "${fieldType}" is not a Section Break.`,
 								);
 								frappe.show_alert({
-									message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.section.`,
+									message: `Field "${sectionName}" is a ${fieldType} and cannot be hidden using Umbra.section.`,
 									indicator: "warning",
 								});
 							}
@@ -1057,9 +1091,14 @@ const Umbra = (function () {
 		 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
 		 *        the edit button will not be hidden.
 		 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+		 * @param {boolean} [props.v16=auto] - Force v16 mode. If not specified, auto-detects based on Frappe version.
 		 *
 		 * @example
-		 
+		 * // Auto-detect version
+		 * Umbra.workspace.edit();
+		 *
+		 * // Force v16 mode
+		 * Umbra.workspace.edit({ v16: true });
 		 */
 		edit: function (props = {}) {
 			if (typeof props.conditional === "function") {
@@ -1085,27 +1124,41 @@ const Umbra = (function () {
 					return;
 				}
 			}
-			// Hide the Edit Workspace button.
-			const $btn = $(
-				"[data-page-route=Workspaces] .workspace-footer",
-			).find('[data-label="Edit"]');
-			if (!$btn.length) {
-				if (props.debug && getEnvironment() === "development") {
-					console.warn(
-						"Umbra.workspace.edit(): Edit workspace button not found.",
+
+			const useV16 = props.v16 !== undefined ? props.v16 : isV16();
+
+			if (useV16) {
+				// V16: Remove the ellipsis button containing Edit/New options
+				$("[data-page-route=Workspaces]")
+					.find("[data-original-title=Ellipsis]")
+					.remove();
+				if (props.debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.workspace.edit(): Ellipsis button removed (v16 mode).",
 					);
-					frappe.show_alert("Edit workspace button not found.");
+			} else {
+				// V15: Edit button in workspace-footer
+				const $btn = $(
+					"[data-page-route=Workspaces] .workspace-footer",
+				).find('[data-label="Edit"]');
+				if (!$btn.length) {
+					if (props.debug && getEnvironment() === "development") {
+						console.warn(
+							"Umbra.workspace.edit(): Edit workspace button not found.",
+						);
+						frappe.show_alert("Edit workspace button not found.");
+					}
+					return;
 				}
-				return;
+				$btn.css("cssText", "display: none !important;");
+				if (props.debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.workspace.edit(): Edit workspace button hidden.",
+					);
 			}
-			$btn.css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development")
-				console.debug(
-					"Umbra.workspace.edit(): Edit workspace button hidden.",
-				);
 		},
 		// ----------------------------
-		// Edit Workspace Button
+		// New Workspace Button
 		// ----------------------------
 		/**
 		 * Hides the New Workspace button.
@@ -1115,16 +1168,14 @@ const Umbra = (function () {
 		 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
 		 *        the create button will not be hidden.
 		 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+		 * @param {boolean} [props.v16=auto] - Force v16 mode. If not specified, auto-detects based on Frappe version.
 		 *
 		 * @example
-		 * (() => {
-		 *   $(document).ready(() => {
-		 *     // Automatically hide the Create Workspace button
-		 *     Umbra.workspace.new();
-		 *   } else {
-		 *     console.warn("Umbra.workspace is not available.");
-		 *   }
-		 * })();
+		 * // Auto-detect version
+		 * Umbra.workspace.new();
+		 *
+		 * // Force v16 mode
+		 * Umbra.workspace.new({ v16: true });
 		 */
 		new: function (props = {}) {
 			if (typeof props.conditional === "function") {
@@ -1150,23 +1201,37 @@ const Umbra = (function () {
 				}
 			}
 
-			const $btn = $(
-				"[data-page-route=Workspaces] .workspace-footer",
-			).find('[data-label="New"]');
-			if (!$btn.length) {
-				if (props.debug && getEnvironment() === "development") {
-					console.warn(
-						"Umbra.workspace.new(): Create workspace button not found.",
+			const useV16 = props.v16 !== undefined ? props.v16 : isV16();
+
+			if (useV16) {
+				// V16: Remove the ellipsis button containing Edit/New options
+				$("[data-page-route=Workspaces]")
+					.find("[data-original-title=Ellipsis]")
+					.remove();
+				if (props.debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.workspace.new(): Ellipsis button removed (v16 mode).",
 					);
-					frappe.show_alert("Create workspace button not found.");
+			} else {
+				// V15: New button in workspace-footer
+				const $btn = $(
+					"[data-page-route=Workspaces] .workspace-footer",
+				).find('[data-label="New"]');
+				if (!$btn.length) {
+					if (props.debug && getEnvironment() === "development") {
+						console.warn(
+							"Umbra.workspace.new(): Create workspace button not found.",
+						);
+						frappe.show_alert("Create workspace button not found.");
+					}
+					return;
 				}
-				return;
+				$btn.css("cssText", "display: none !important;");
+				if (props.debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.workspace.new(): Create workspace button hidden.",
+					);
 			}
-			$btn.css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development")
-				console.debug(
-					"Umbra.workspace.new(): Create workspace button hidden.",
-				);
 		},
 
 		// ----------------------------
@@ -1180,18 +1245,14 @@ const Umbra = (function () {
 		 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
 		 *        the sidebar will not be hidden.
 		 * @param {boolean} [props.debug=false] - If true, outputs debug information to the console.
+		 * @param {boolean} [props.v16=auto] - Force v16 mode. If not specified, auto-detects based on Frappe version.
 		 *
 		 * @example
-		 * (() => {
-		 *   $(document).ready(() => {
-		 *     if (typeof Umbra !== 'undefined' && Umbra.workspace) {
-		 *       // Automatically hide the Workspace sidebar
-		 *       Umbra.workspace.sidebar();
-		 *     } else {
-		 *       console.warn("Umbra.workspace is not available.");
-		 *     }
-		 *   })
-		 * })();
+		 * // Auto-detect version
+		 * Umbra.workspace.sidebar();
+		 *
+		 * // Force v16 mode with permissions bypass
+		 * Umbra.workspace.sidebar({ v16: true, permissions: ['System Manager'] });
 		 */
 		sidebar: function (props = {}) {
 			if (typeof props.conditional === "function") {
@@ -1217,28 +1278,93 @@ const Umbra = (function () {
 				}
 			}
 
-			const $sidebar = $(
-				"[data-page-route=Workspaces] .layout-side-section",
-			);
-			if (!$sidebar.length) {
-				if (props.debug && getEnvironment() === "development") {
-					console.warn(
-						"Umbra.workspace.sidebar(): Workspace sidebar not found.",
-					);
-					frappe.show_alert("Workspace sidebar not found.");
-				}
-				return;
-			}
-			$sidebar.css("cssText", "display: none !important;");
+			const useV16 = props.v16 !== undefined ? props.v16 : isV16();
 
-			$("button.sidebar-toggle-btn").css(
-				"cssText",
-				"display: none !important;",
-			);
-			if (props.debug && getEnvironment() === "development")
-				console.debug(
-					"Umbra.workspace.sidebar(): Workspace sidebar hidden.",
+			if (useV16) {
+				// V16: New sidebar structure with body-sidebar-container
+				let hidden = false;
+
+				// Hide the main sidebar container
+				const $sidebarContainer = $(".body-sidebar-container");
+				if ($sidebarContainer.length) {
+					$sidebarContainer.css(
+						"cssText",
+						"display: none !important;",
+					);
+					hidden = true;
+				}
+
+				// Also hide body-sidebar directly if container not found
+				const $sidebar = $(".body-sidebar");
+				if ($sidebar.length) {
+					$sidebar.css("cssText", "display: none !important;");
+					hidden = true;
+				}
+
+				// Hide sidebar toggle button
+				$("button.sidebar-toggle-btn").css(
+					"cssText",
+					"display: none !important;",
 				);
+
+				// Hide collapse link
+				$(".collapse-sidebar-link").css(
+					"cssText",
+					"display: none !important;",
+				);
+
+				// Also try legacy selector for backwards compatibility
+				const $legacySidebar = $(
+					"[data-page-route=Workspaces] .layout-side-section",
+				);
+				if ($legacySidebar.length) {
+					$legacySidebar.css("cssText", "display: none !important;");
+					hidden = true;
+				}
+
+				if (
+					!hidden &&
+					props.debug &&
+					getEnvironment() === "development"
+				) {
+					console.warn(
+						"Umbra.workspace.sidebar(): Workspace sidebar not found (v16 mode).",
+					);
+				}
+				if (
+					hidden &&
+					props.debug &&
+					getEnvironment() === "development"
+				) {
+					console.debug(
+						"Umbra.workspace.sidebar(): Workspace sidebar hidden (v16 mode).",
+					);
+				}
+			} else {
+				// V15: Original sidebar structure
+				const $sidebar = $(
+					"[data-page-route=Workspaces] .layout-side-section",
+				);
+				if (!$sidebar.length) {
+					if (props.debug && getEnvironment() === "development") {
+						console.warn(
+							"Umbra.workspace.sidebar(): Workspace sidebar not found.",
+						);
+						frappe.show_alert("Workspace sidebar not found.");
+					}
+					return;
+				}
+				$sidebar.css("cssText", "display: none !important;");
+
+				$("button.sidebar-toggle-btn").css(
+					"cssText",
+					"display: none !important;",
+				);
+				if (props.debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.workspace.sidebar(): Workspace sidebar hidden.",
+					);
+			}
 		},
 	};
 
