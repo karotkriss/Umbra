@@ -3,7 +3,7 @@
  *
  * Hides things.
  * Umbra simplifies hiding elements we might commonly hide in Frappe.
- * 
+ *
  * @version 1.7.0
  *
  * @module Umbra
@@ -32,7 +32,7 @@ const Umbra = (function () {
 	 * This function checks if Frappe's boot information is available to determine
 	 * if the application is running in development mode (using the developer_mode flag).
 	 * If that is not available, it falls back to checking the window's hostname for common
-	 * development hosts such as "localhost" or "127.0.0.1". If neither method provides a 
+	 * development hosts such as "localhost" or "127.0.0.1". If neither method provides a
 	 * definitive answer, it defaults to "production".
 	 *
 	 * @private
@@ -40,17 +40,27 @@ const Umbra = (function () {
 	 */
 	const getEnvironment = () => {
 		// If Frappe boot is available, use its developer_mode flag.
-		if (typeof frappe !== 'undefined' && frappe.boot && typeof frappe.boot.developer_mode !== 'undefined') {
-			return frappe.boot.developer_mode ? 'development' : 'production';
+		if (
+			typeof frappe !== "undefined" &&
+			frappe.boot &&
+			typeof frappe.boot.developer_mode !== "undefined"
+		) {
+			return frappe.boot.developer_mode ? "development" : "production";
 		}
 
-		if (typeof window !== 'undefined' && window.location && window.location.hostname) {
-			const devHosts = ['localhost', '127.0.0.1'];
-			return devHosts.includes(window.location.hostname) ? 'development' : 'production';
+		if (
+			typeof window !== "undefined" &&
+			window.location &&
+			window.location.hostname
+		) {
+			const devHosts = ["localhost", "127.0.0.1"];
+			return devHosts.includes(window.location.hostname)
+				? "development"
+				: "production";
 		}
 
-		return 'production';
-	}
+		return "production";
+	};
 
 	// ----------------------------
 	// Actions
@@ -88,15 +98,23 @@ const Umbra = (function () {
 		if (window.cur_frm && window.cur_frm.doctype) {
 			doctype = window.cur_frm.doctype;
 		} else {
-			if (props.debug && getEnvironment() === "development") console.warn("Umbra.actions(): No doctype specified and window.cur_frm is not available.");
+			if (props.debug && getEnvironment() === "development")
+				console.warn(
+					"Umbra.actions(): No doctype specified and window.cur_frm is not available.",
+				);
 			return;
 		}
 		props = props || {};
 
-		const { conditional } = props
-		if (typeof conditional !== 'undefined' && typeof props.conditional !== "function") {
+		const { conditional } = props;
+		if (
+			typeof conditional !== "undefined" &&
+			typeof props.conditional !== "function"
+		) {
 			if (props.debug && getEnvironment() === "development") {
-				console.debug(`Umbra.action(): 'conditional' must be a function.`);
+				console.debug(
+					`Umbra.action(): 'conditional' must be a function.`,
+				);
 			}
 			return;
 		}
@@ -104,17 +122,24 @@ const Umbra = (function () {
 		if (Array.isArray(props.permissions)) {
 			if (userHasRole(props.permissions)) {
 				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.actions(): User has bypass role, skipping hide for doctype ${doctype}`);
+					console.debug(
+						`Umbra.actions(): User has bypass role, skipping hide for doctype ${doctype}`,
+					);
 				}
 				return;
 			}
 		}
 
-		if (typeof conditional !== 'undefined') {
-			$(".actions-btn-group").css("cssText", `display: ${!conditional(window.cur_frm) ? 'block' : 'none'}`);
+		if (typeof conditional !== "undefined") {
+			$(".actions-btn-group").css(
+				"cssText",
+				`display: ${!conditional(window.cur_frm) ? "block" : "none"}`,
+			);
 			if (!props.conditional(window.cur_frm)) {
 				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.actions(): Conditional check returned false for doctype ${doctype}`);
+					console.debug(
+						`Umbra.actions(): Conditional check returned false for doctype ${doctype}`,
+					);
 				}
 			}
 		} else {
@@ -122,7 +147,9 @@ const Umbra = (function () {
 		}
 
 		if (props.debug && getEnvironment() === "development") {
-			console.debug(`Umbra.actions(): Actions hidden for doctype ${doctype}`);
+			console.debug(
+				`Umbra.actions(): Actions hidden for doctype ${doctype}`,
+			);
 		}
 	}
 
@@ -203,8 +230,14 @@ const Umbra = (function () {
 				}
 			}
 			if (hideActivitySwitch) {
-				$(".show-all-activity").css("cssText", "display: none !important;");
-				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Hiding extra element with class 'show-all-activity'.");
+				$(".show-all-activity").css(
+					"cssText",
+					"display: none !important;",
+				);
+				if (debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.timeline: Hiding extra element with class 'show-all-activity'.",
+					);
 			}
 		}
 
@@ -212,12 +245,18 @@ const Umbra = (function () {
 		if (typeof props.conditional !== "undefined") {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Top-level conditional check returned false. Aborting timeline filtering.");
+					if (debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.timeline: Top-level conditional check returned false. Aborting timeline filtering.",
+						);
 					processExtras();
 					return;
 				}
 			} else if (props.conditional === false) {
-				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Top-level conditional is false. Aborting timeline filtering.");
+				if (debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.timeline: Top-level conditional is false. Aborting timeline filtering.",
+					);
 				processExtras();
 				return;
 			}
@@ -228,9 +267,14 @@ const Umbra = (function () {
 			const $wrapper = $(".new-timeline");
 			if ($wrapper.length) {
 				$wrapper.hide();
-				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: No filter provided. Hiding entire timeline container (.new-timeline).");
+				if (debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.timeline: No filter provided. Hiding entire timeline container (.new-timeline).",
+					);
 			} else {
-				console.warn("Umbra.timeline: Timeline wrapper (.new-timeline) not found.");
+				console.warn(
+					"Umbra.timeline: Timeline wrapper (.new-timeline) not found.",
+				);
 			}
 			processExtras();
 			return;
@@ -241,9 +285,14 @@ const Umbra = (function () {
 			const $timelineContainer = $(".timeline-items");
 			if ($timelineContainer.length) {
 				$timelineContainer.find(".timeline-item").show();
-				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Filter set to all. Displaying all timeline items.");
+				if (debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.timeline: Filter set to all. Displaying all timeline items.",
+					);
 			} else {
-				console.warn("Umbra.timeline: Timeline container (.timeline-items) not found.");
+				console.warn(
+					"Umbra.timeline: Timeline container (.timeline-items) not found.",
+				);
 			}
 			processExtras();
 			return;
@@ -256,12 +305,18 @@ const Umbra = (function () {
 			if (typeof communicationsFilter.conditional === "function") {
 				try {
 					if (!communicationsFilter.conditional()) {
-						if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Communications filter conditional check returned false. Aborting timeline filtering.");
+						if (debug && getEnvironment() === "development")
+							console.debug(
+								"Umbra.timeline: Communications filter conditional check returned false. Aborting timeline filtering.",
+							);
 						processExtras();
 						return;
 					}
 				} catch (e) {
-					console.warn("Umbra.timeline: Error in communications filter conditional function.", e);
+					console.warn(
+						"Umbra.timeline: Error in communications filter conditional function.",
+						e,
+					);
 					processExtras();
 					return;
 				}
@@ -269,13 +324,18 @@ const Umbra = (function () {
 
 			const $timelineContainer = $(".timeline-items");
 			if (!$timelineContainer.length) {
-				console.warn("Umbra.timeline: Timeline container (.timeline-items) not found.");
+				console.warn(
+					"Umbra.timeline: Timeline container (.timeline-items) not found.",
+				);
 				processExtras();
 				return;
 			}
 
 			const $items = $timelineContainer.find(".timeline-item");
-			if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Found ${$items.length} timeline items.`);
+			if (debug && getEnvironment() === "development")
+				console.debug(
+					`Umbra.timeline: Found ${$items.length} timeline items.`,
+				);
 			$items.hide();
 
 			const commItems = [];
@@ -289,14 +349,21 @@ const Umbra = (function () {
 						if (!commItemMap[commName]) {
 							commItemMap[commName] = $();
 						}
-						commItemMap[commName] = commItemMap[commName].add($item);
+						commItemMap[commName] =
+							commItemMap[commName].add($item);
 					}
 				}
 			});
-			if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Found ${commItems.length} communication items.`);
+			if (debug && getEnvironment() === "development")
+				console.debug(
+					`Umbra.timeline: Found ${commItems.length} communication items.`,
+				);
 
 			if (commItems.length === 0) {
-				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: No communication items to process.");
+				if (debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.timeline: No communication items to process.",
+					);
 				processExtras();
 				return;
 			}
@@ -304,7 +371,10 @@ const Umbra = (function () {
 			if (!userOnly) {
 				$.each(commItemMap, function (name, $elements) {
 					$elements.show();
-					if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Displaying communication ${name} (all communications shown).`);
+					if (debug && getEnvironment() === "development")
+						console.debug(
+							`Umbra.timeline: Displaying communication ${name} (all communications shown).`,
+						);
 				});
 			} else {
 				frappe.call({
@@ -312,12 +382,12 @@ const Umbra = (function () {
 					args: {
 						doctype: "Communication",
 						fields: ["name", "sender", "recipients"],
-						filters: [["name", "in", commItems]]
+						filters: [["name", "in", commItems]],
 					},
 					callback: function (r) {
 						if (r.message) {
 							const commRecords = {};
-							r.message.forEach(rec => {
+							r.message.forEach((rec) => {
 								commRecords[rec.name] = rec;
 							});
 							$.each(commItemMap, function (name, $elements) {
@@ -328,32 +398,62 @@ const Umbra = (function () {
 									if (record.sender === currentUser) {
 										shouldDisplay = true;
 									} else {
-										const recipients = record.recipients || "";
-										const recArr = recipients.split(",").map(s => s.trim());
-										if (recArr.indexOf(currentUser) !== -1) {
+										const recipients =
+											record.recipients || "";
+										const recArr = recipients
+											.split(",")
+											.map((s) => s.trim());
+										if (
+											recArr.indexOf(currentUser) !== -1
+										) {
 											shouldDisplay = true;
 										}
 									}
 								} else {
-									if (debug && getEnvironment() === "development") console.warn(`Umbra.timeline: Communication record not found for ${name}`);
+									if (
+										debug &&
+										getEnvironment() === "development"
+									)
+										console.warn(
+											`Umbra.timeline: Communication record not found for ${name}`,
+										);
 								}
 								if (shouldDisplay) {
 									$elements.show();
-									if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Displaying communication ${name} for current user.`);
+									if (
+										debug &&
+										getEnvironment() === "development"
+									)
+										console.debug(
+											`Umbra.timeline: Displaying communication ${name} for current user.`,
+										);
 								} else {
-									if (debug && getEnvironment() === "development") console.debug(`Umbra.timeline: Hiding communication ${name} not meant for current user.`);
+									if (
+										debug &&
+										getEnvironment() === "development"
+									)
+										console.debug(
+											`Umbra.timeline: Hiding communication ${name} not meant for current user.`,
+										);
 								}
 							});
 							processExtras();
 						} else {
-							if (debug && getEnvironment() === "development") console.warn("Umbra.timeline: Error fetching communication records.");
+							if (debug && getEnvironment() === "development")
+								console.warn(
+									"Umbra.timeline: Error fetching communication records.",
+								);
 							processExtras();
 						}
 					},
 					error: function (err) {
-						if (debug && getEnvironment() === "development") console.warn("Umbra.timeline: Error during frappe.call", err);
+						if (debug && getEnvironment() === "development")
+							console.warn(
+								"Umbra.timeline: Error during frappe.call",
+								err,
+							);
 						processExtras();
-					}
+					},
 				});
 				return;
 			}
@@ -361,9 +461,15 @@ const Umbra = (function () {
 			const $wrapper = $(".new-timeline");
 			if ($wrapper.length) {
 				$wrapper.hide();
-				if (debug && getEnvironment() === "development") console.debug("Umbra.timeline: Unrecognized filter. Hiding entire timeline container (.new-timeline).");
+				if (debug && getEnvironment() === "development")
+					console.debug(
+						"Umbra.timeline: Unrecognized filter. Hiding entire timeline container (.new-timeline).",
+					);
 			} else {
-				if (debug && getEnvironment() === "development") console.warn("Umbra.timeline: Timeline wrapper (.new-timeline) not found.");
+				if (debug && getEnvironment() === "development")
+					console.warn(
+						"Umbra.timeline: Timeline wrapper (.new-timeline) not found.",
+					);
 			}
 		}
 		processExtras();
@@ -398,7 +504,10 @@ const Umbra = (function () {
 		if (window.cur_frm && window.cur_frm.doctype) {
 			doctype = window.cur_frm.doctype;
 		} else {
-			if (props.debug && getEnvironment() === "development") console.warn("Umbra.comment(): No doctype specified and window.cur_frm is not available.");
+			if (props.debug && getEnvironment() === "development")
+				console.warn(
+					"Umbra.comment(): No doctype specified and window.cur_frm is not available.",
+				);
 			return;
 		}
 
@@ -406,7 +515,9 @@ const Umbra = (function () {
 		if (typeof props.conditional === "function") {
 			if (!props.conditional(window.cur_frm)) {
 				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.comment(): Conditional check returned false for doctype ${doctype}`);
+					console.debug(
+						`Umbra.comment(): Conditional check returned false for doctype ${doctype}`,
+					);
 				}
 				return;
 			}
@@ -414,14 +525,18 @@ const Umbra = (function () {
 		if (Array.isArray(props.permissions)) {
 			if (userHasRole(props.permissions)) {
 				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.comment(): User has bypass role, skipping comment hiding for doctype ${doctype}`);
+					console.debug(
+						`Umbra.comment(): User has bypass role, skipping comment hiding for doctype ${doctype}`,
+					);
 				}
 				return;
 			}
 		}
 		$(".comment-box").css("cssText", "display: none !important;");
 		if (props.debug && getEnvironment() === "development") {
-			console.debug(`Umbra.comment(): Comment box hidden for doctype ${doctype}`);
+			console.debug(
+				`Umbra.comment(): Comment box hidden for doctype ${doctype}`,
+			);
 		}
 	}
 	// ----------------------------
@@ -429,7 +544,7 @@ const Umbra = (function () {
 	// ----------------------------
 	/**
 	 * Hides the sidebar element in a Frappe form.
-	 * 
+	 *
 	 * If the conditional returns false or the user has any bypass roles (permissions), no action is taken.
 	 * Otherwise, the sidebar is forcibly hidden via a CSS override.
 	 *
@@ -458,17 +573,21 @@ const Umbra = (function () {
 		if (window.cur_frm && window.cur_frm.doctype) {
 			doctype = window.cur_frm.doctype;
 		} else {
-			if (props.debug && getEnvironment() === "development") console.warn("Umbra.sidebar(): No doctype specified and window.cur_frm is not available.");
+			if (props.debug && getEnvironment() === "development")
+				console.warn(
+					"Umbra.sidebar(): No doctype specified and window.cur_frm is not available.",
+				);
 			return;
 		}
 
 		props = props || {};
 
-
 		if (typeof props.conditional === "function") {
 			if (!props.conditional(window.cur_frm)) {
 				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.sidebar(): Conditional check returned false for doctype ${doctype}`);
+					console.debug(
+						`Umbra.sidebar(): Conditional check returned false for doctype ${doctype}`,
+					);
 				}
 				return;
 			}
@@ -478,16 +597,26 @@ const Umbra = (function () {
 		if (Array.isArray(props.permissions)) {
 			if (userHasRole(props.permissions)) {
 				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.sidebar(): User has bypass role, skipping sidebar hiding for doctype ${doctype}`);
+					console.debug(
+						`Umbra.sidebar(): User has bypass role, skipping sidebar hiding for doctype ${doctype}`,
+					);
 				}
 				return;
 			}
 		}
 
-		$(".layout-side-section:has(.form-sidebar)").css("cssText", "display: none !important;");
-		$("button.sidebar-toggle-btn").css("cssText", "display: none !important;");
+		$(".layout-side-section:has(.form-sidebar)").css(
+			"cssText",
+			"display: none !important;",
+		);
+		$("button.sidebar-toggle-btn").css(
+			"cssText",
+			"display: none !important;",
+		);
 		if (props.debug && getEnvironment() === "development") {
-			console.debug(`Umbra.sidebar(): Sidebar hidden for doctype ${doctype}`);
+			console.debug(
+				`Umbra.sidebar(): Sidebar hidden for doctype ${doctype}`,
+			);
 		}
 	}
 
@@ -496,18 +625,18 @@ const Umbra = (function () {
 	// ----------------------------
 	/**
 	 * Dynamic API to hide individual fields in a Frappe form.
-	 * 
+	 *
 	 * You can call this as:
 	 *     Umbra.field.FIELD_NAME(props);
-	 * 
+	 *
 	 * where `FIELD_NAME` is the actual fieldname you wish to hide.
-	 * 
+	 *
 	 * Utils.js is a dependency of this API
-	 * 
+	 *
 	 * @namespace Umbra.field
-	 * 
+	 *
 	 * @function
-	 * 
+	 *
 	 * @param {Object} [props] - Configuration options.
 	 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the field should be hidden.
 	 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
@@ -523,70 +652,104 @@ const Umbra = (function () {
 	 *   debug: true
 	 * });
 	 */
-	const field = new Proxy({}, {
-		get(target, fieldName) {
-			return function (props = {}) {
-				// Check if Utils is available
-				if (typeof Utils === 'undefined') {
-					if (props.debug && getEnvironment() === "development") {
-						console.warn("Umbra.field: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
-						frappe.show_alert("Utils module is missing. Please include Utils.js.");
-					}
-					return;
-				}
-
-				if (!props.conditional) {
-					props.conditional = () => { return true }
-				}
-
-				// Check conditional prop
-				if (typeof props.conditional !== "function") {
-					if (props.debug && getEnvironment() === "development") {
-						console.debug(`Umbra.field.${fieldName}(): 'conditional' must be a function.`);
-					}
-					return;
-				}
-
-				// Check permissions prop: if user has any bypass role, skip hiding
-				if (Array.isArray(props.permissions)) {
-					if (userHasRole(props.permissions)) {
+	const field = new Proxy(
+		{},
+		{
+			get(target, fieldName) {
+				return function (props = {}) {
+					// Check if Utils is available
+					if (typeof Utils === "undefined") {
 						if (props.debug && getEnvironment() === "development") {
-							console.debug(`Umbra.field.${fieldName}(): User has bypass role, skipping field hiding.`);
+							console.warn(
+								"Umbra.field: Utils module is not available.\nhttps://github.com/karotkriss/Utils",
+							);
+							frappe.show_alert(
+								"Utils module is missing. Please include Utils.js.",
+							);
 						}
 						return;
 					}
-				}
 
-				// Check if the field exists and is not a Tab Break, Section Break, or Column Break.
-				const frm = cur_frm;
-				if (frm && frm.fields_dict && frm.fields_dict[fieldName]) {
-					const fieldDef = frm.fields_dict[fieldName].df;
-					const fieldType = fieldDef.fieldtype;
-					if (["Tab Break", "Section Break", "Column Break"].includes(fieldType)) {
-						console.warn(`Umbra.field.${fieldName}(): Field type "${fieldType}" cannot be hidden using Umbra.field.`);
-						frappe.show_alert({
-							message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.field.`,
-							indicator: 'warning'
-						});
+					if (!props.conditional) {
+						props.conditional = () => {
+							return true;
+						};
+					}
+
+					// Check conditional prop
+					if (typeof props.conditional !== "function") {
+						if (props.debug && getEnvironment() === "development") {
+							console.debug(
+								`Umbra.field.${fieldName}(): 'conditional' must be a function.`,
+							);
+						}
 						return;
 					}
-				} else {
-					if (props.debug && getEnvironment() === "development") {
-						console.warn(`Umbra.field.${fieldName}(): Field not found in current form.`);
-						frappe.show_alert(`Field "${fieldName}" not found in current form.`);
+
+					// Check permissions prop: if user has any bypass role, skip hiding
+					if (Array.isArray(props.permissions)) {
+						if (userHasRole(props.permissions)) {
+							if (
+								props.debug &&
+								getEnvironment() === "development"
+							) {
+								console.debug(
+									`Umbra.field.${fieldName}(): User has bypass role, skipping field hiding.`,
+								);
+							}
+							return;
+						}
 					}
-					return;
-				}
 
-				// Hide the field using Utils.hideFields.
-				Utils.hideFields({ fields: [fieldName], conditional: props.conditional, debug: props.debug });
+					// Check if the field exists and is not a Tab Break, Section Break, or Column Break.
+					const frm = cur_frm;
+					if (frm && frm.fields_dict && frm.fields_dict[fieldName]) {
+						const fieldDef = frm.fields_dict[fieldName].df;
+						const fieldType = fieldDef.fieldtype;
+						if (
+							[
+								"Tab Break",
+								"Section Break",
+								"Column Break",
+							].includes(fieldType)
+						) {
+							console.warn(
+								`Umbra.field.${fieldName}(): Field type "${fieldType}" cannot be hidden using Umbra.field.`,
+							);
+							frappe.show_alert({
+								message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.field.`,
+								indicator: "warning",
+							});
+							return;
+						}
+					} else {
+						if (props.debug && getEnvironment() === "development") {
+							console.warn(
+								`Umbra.field.${fieldName}(): Field not found in current form.`,
+							);
+							frappe.show_alert(
+								`Field "${fieldName}" not found in current form.`,
+							);
+						}
+						return;
+					}
 
-				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.field.${fieldName}(): Field "${fieldName}" hidden.`);
-				}
-			};
-		}
-	})
+					// Hide the field using Utils.hideFields.
+					Utils.hideFields({
+						fields: [fieldName],
+						conditional: props.conditional,
+						debug: props.debug,
+					});
+
+					if (props.debug && getEnvironment() === "development") {
+						console.debug(
+							`Umbra.field.${fieldName}(): Field "${fieldName}" hidden.`,
+						);
+					}
+				};
+			},
+		},
+	);
 
 	// ----------------------------
 	// Form Fields
@@ -610,32 +773,47 @@ const Umbra = (function () {
 	 * @returns {void}
 	 */
 	const fields = (props = {}) => {
-		const { fields, conditional = () => { return true }, permissions, debug } = props
+		const {
+			fields,
+			conditional = () => {
+				return true;
+			},
+			permissions,
+			debug,
+		} = props;
 
-		if (typeof Utils === 'undefined') {
+		if (typeof Utils === "undefined") {
 			if (debug && getEnvironment() === "development") {
-				console.warn("Umbra.fields: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
-				frappe.show_alert("Utils module is missing. Please include Utils.js.");
+				console.warn(
+					"Umbra.fields: Utils module is not available.\nhttps://github.com/karotkriss/Utils",
+				);
+				frappe.show_alert(
+					"Utils module is missing. Please include Utils.js.",
+				);
 			}
 			return;
 		}
 
 		if (!fields || !Array.isArray(fields)) {
-			if (debug && getEnvironment() === "development") console.error("Umbra.fields expects 'fields' to be an array.");
+			if (debug && getEnvironment() === "development")
+				console.error("Umbra.fields expects 'fields' to be an array.");
 			return;
 		}
 
 		if (Array.isArray(permissions) && userHasRole(permissions)) {
 			if (debug && getEnvironment() === "development") {
-				console.debug(`Umbra.fields(): User has bypass role, skipping field hiding.`);
+				console.debug(
+					`Umbra.fields(): User has bypass role, skipping field hiding.`,
+				);
 			}
 			return;
 		}
 
-
 		if (typeof conditional !== "function") {
 			if (debug && getEnvironment() === "development") {
-				console.debug(`Umbra.fields(): 'conditional' must be a function.`);
+				console.debug(
+					`Umbra.fields(): 'conditional' must be a function.`,
+				);
 			}
 			return;
 		}
@@ -643,7 +821,7 @@ const Umbra = (function () {
 		frappe.utilsPlus.hideFields({
 			fields: fields,
 			conditional: conditional,
-			debug: debug
+			debug: debug,
 		});
 	};
 
@@ -660,9 +838,9 @@ const Umbra = (function () {
 	 * This API depends on Utils.js.
 	 *
 	 * @namespace Umbra.section
-	 * 
+	 *
 	 * @function
-	 * 
+	 *
 	 * @param {Object} [props] - Configuration options.
 	 * @param {Function} [props.conditional] - A callback that returns a boolean and determines whether the section should be hidden.
 	 * @param {string[]} [props.permissions] - An array of role names. If the current user has any of these roles,
@@ -678,66 +856,101 @@ const Umbra = (function () {
 	 *   debug: true
 	 * });
 	 */
-	const section = new Proxy({}, {
-		get(target, sectionName) {
-			return function (props = {}) {
-				// Check if Utils is available
-				if (typeof Utils === 'undefined') {
-					if (props.debug && getEnvironment() === "development") {
-						console.warn("Umbra.section: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
-						frappe.show_alert("Utils module is missing. Please include Utils.js.");
-					}
-					return;
-				}
-
-				if (!conditional) {
-					props.conditional = () => { return true }
-				}
-
-				// Check conditional prop
-				if (typeof props.conditional !== "function") {
-					if (props.debug && getEnvironment() === "development") {
-						console.debug(`Umbra.section.${sectionName}(): 'conditional' must be a function.`);
-					}
-					return;
-				}
-				// Check permissions prop: if user has any bypass role, skip hiding
-				if (Array.isArray(props.permissions) && userHasRole(props.permissions)) {
-					if (props.debug && getEnvironment() === "development") {
-						console.debug(`Umbra.section.${sectionName}(): User has bypass role, skipping section hiding.`);
-					}
-					return;
-				}
-				// Check if the section exists and is a Section Break
-				const frm = cur_frm;
-				if (frm && frm.fields_dict && frm.fields_dict[sectionName]) {
-					const fieldDef = frm.fields_dict[sectionName].df;
-					const fieldType = fieldDef.fieldtype;
-					if (fieldType !== "Section Break") {
+	const section = new Proxy(
+		{},
+		{
+			get(target, sectionName) {
+				return function (props = {}) {
+					// Check if Utils is available
+					if (typeof Utils === "undefined") {
 						if (props.debug && getEnvironment() === "development") {
-							console.warn(`Umbra.section.${sectionName}(): Field type "${fieldType}" is not a Section Break.`);
-							frappe.show_alert({
-								message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.section.`,
-								indicator: 'warning'
-							});
+							console.warn(
+								"Umbra.section: Utils module is not available.\nhttps://github.com/karotkriss/Utils",
+							);
+							frappe.show_alert(
+								"Utils module is missing. Please include Utils.js.",
+							);
 						}
 						return;
 					}
-				} else {
-					if (props.debug && getEnvironment() === "development") {
-						console.warn(`Umbra.section.${sectionName}(): Section not found in current form.`);
-						frappe.show_alert(`Section "${sectionName}" not found in current form.`);
+
+					if (!conditional) {
+						props.conditional = () => {
+							return true;
+						};
 					}
-					return;
-				}
-				// Hide the section using Utils.hideFields.
-				Utils.hideFields({ fields: [sectionName], conditional: props.conditional, debug: props.debug });
-				if (props.debug && getEnvironment() === "development") {
-					console.debug(`Umbra.section.${sectionName}(): Section "${sectionName}" hidden.`);
-				}
-			};
-		}
-	})
+
+					// Check conditional prop
+					if (typeof props.conditional !== "function") {
+						if (props.debug && getEnvironment() === "development") {
+							console.debug(
+								`Umbra.section.${sectionName}(): 'conditional' must be a function.`,
+							);
+						}
+						return;
+					}
+					// Check permissions prop: if user has any bypass role, skip hiding
+					if (
+						Array.isArray(props.permissions) &&
+						userHasRole(props.permissions)
+					) {
+						if (props.debug && getEnvironment() === "development") {
+							console.debug(
+								`Umbra.section.${sectionName}(): User has bypass role, skipping section hiding.`,
+							);
+						}
+						return;
+					}
+					// Check if the section exists and is a Section Break
+					const frm = cur_frm;
+					if (
+						frm &&
+						frm.fields_dict &&
+						frm.fields_dict[sectionName]
+					) {
+						const fieldDef = frm.fields_dict[sectionName].df;
+						const fieldType = fieldDef.fieldtype;
+						if (fieldType !== "Section Break") {
+							if (
+								props.debug &&
+								getEnvironment() === "development"
+							) {
+								console.warn(
+									`Umbra.section.${sectionName}(): Field type "${fieldType}" is not a Section Break.`,
+								);
+								frappe.show_alert({
+									message: `Field "${fieldName}" is a ${fieldType} and cannot be hidden using Umbra.section.`,
+									indicator: "warning",
+								});
+							}
+							return;
+						}
+					} else {
+						if (props.debug && getEnvironment() === "development") {
+							console.warn(
+								`Umbra.section.${sectionName}(): Section not found in current form.`,
+							);
+							frappe.show_alert(
+								`Section "${sectionName}" not found in current form.`,
+							);
+						}
+						return;
+					}
+					// Hide the section using Utils.hideFields.
+					Utils.hideFields({
+						fields: [sectionName],
+						conditional: props.conditional,
+						debug: props.debug,
+					});
+					if (props.debug && getEnvironment() === "development") {
+						console.debug(
+							`Umbra.section.${sectionName}(): Section "${sectionName}" hidden.`,
+						);
+					}
+				};
+			},
+		},
+	);
 
 	// ----------------------------
 	// Form Sections
@@ -761,32 +974,49 @@ const Umbra = (function () {
 	 * @returns {void}
 	 */
 	const sections = (props = {}) => {
-		const { sections, conditional = () => { return true }, permissions, debug } = props
+		const {
+			sections,
+			conditional = () => {
+				return true;
+			},
+			permissions,
+			debug,
+		} = props;
 
-		if (typeof Utils === 'undefined') {
+		if (typeof Utils === "undefined") {
 			if (debug && getEnvironment() === "development") {
-				console.warn("Umbra.sections: Utils module is not available.\nhttps://github.com/karotkriss/Utils");
-				frappe.show_alert("Utils module is missing. Please include Utils.js.");
+				console.warn(
+					"Umbra.sections: Utils module is not available.\nhttps://github.com/karotkriss/Utils",
+				);
+				frappe.show_alert(
+					"Utils module is missing. Please include Utils.js.",
+				);
 			}
 			return;
 		}
 
 		if (!props || typeof props !== "object") {
-			if (debug && getEnvironment() === "development") console.error("Umbra.sections expects an object as an argument.");
+			if (debug && getEnvironment() === "development")
+				console.error(
+					"Umbra.sections expects an object as an argument.",
+				);
 			return;
 		}
 
 		if (Array.isArray(permissions) && userHasRole(permissions)) {
 			if (debug && getEnvironment() === "development") {
-				console.debug(`Umbra.sections(): User has bypass role, skipping section hiding.`);
+				console.debug(
+					`Umbra.sections(): User has bypass role, skipping section hiding.`,
+				);
 			}
 			return;
 		}
 
-
 		if (typeof conditional !== "function") {
 			if (debug && getEnvironment() === "development") {
-				console.debug(`Umbra.sections(): 'conditional' must be a function.`);
+				console.debug(
+					`Umbra.sections(): 'conditional' must be a function.`,
+				);
 			}
 			return;
 		}
@@ -794,27 +1024,26 @@ const Umbra = (function () {
 		frappe.utilsPlus.hideFields({
 			fields: sections,
 			conditional: conditional,
-			debug: debug
+			debug: debug,
 		});
 	};
-
 
 	// ----------------------------
 	// Workspace
 	// ----------------------------
 	/**
 	 * Dynamic API to hide individual elements for the /app route.
-	 * 
+	 *
 	 * @namespace Umbra.workspace
-	* (() => {
-	*   $(document).ready(() => {
-	*     // Automatically hide the Create Workspace button
-	*     Umbra.workspace.new();
-	*   } else {
-	*     console.warn("Umbra.workspace is not available.");
-	*   }
-	* })();
-	 * 
+	 * (() => {
+	 *   $(document).ready(() => {
+	 *     // Automatically hide the Create Workspace button
+	 *     Umbra.workspace.new();
+	 *   } else {
+	 *     console.warn("Umbra.workspace is not available.");
+	 *   }
+	 * })();
+	 *
 	 */
 	const workspace = {
 		// ----------------------------
@@ -835,28 +1064,45 @@ const Umbra = (function () {
 		edit: function (props = {}) {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.edit(): Conditional check returned false.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.workspace.edit(): Conditional check returned false.",
+						);
 					return;
 				}
 			}
 
-			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+			if (
+				Array.isArray(props.permissions) &&
+				typeof frappe !== "undefined" &&
+				frappe.user
+			) {
 				if (userHasRole(props.permissions)) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.edit(): User has bypass role, skipping hide.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.workspace.edit(): User has bypass role, skipping hide.",
+						);
 					return;
 				}
 			}
 			// Hide the Edit Workspace button.
-			const $btn = $('[data-page-route=Workspaces] .workspace-footer').find('[data-label="Edit"]');
+			const $btn = $(
+				"[data-page-route=Workspaces] .workspace-footer",
+			).find('[data-label="Edit"]');
 			if (!$btn.length) {
 				if (props.debug && getEnvironment() === "development") {
-					console.warn("Umbra.workspace.edit(): Edit workspace button not found.");
+					console.warn(
+						"Umbra.workspace.edit(): Edit workspace button not found.",
+					);
 					frappe.show_alert("Edit workspace button not found.");
 				}
 				return;
 			}
 			$btn.css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.edit(): Edit workspace button hidden.");
+			if (props.debug && getEnvironment() === "development")
+				console.debug(
+					"Umbra.workspace.edit(): Edit workspace button hidden.",
+				);
 		},
 		// ----------------------------
 		// Edit Workspace Button
@@ -883,27 +1129,44 @@ const Umbra = (function () {
 		new: function (props = {}) {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.new(): Conditional check returned false.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.workspace.new(): Conditional check returned false.",
+						);
 					return;
 				}
 			}
-			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+			if (
+				Array.isArray(props.permissions) &&
+				typeof frappe !== "undefined" &&
+				frappe.user
+			) {
 				if (userHasRole(props.permissions)) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.new(): User has bypass role, skipping hide.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.workspace.new(): User has bypass role, skipping hide.",
+						);
 					return;
 				}
 			}
 
-			const $btn = $('[data-page-route=Workspaces] .workspace-footer').find('[data-label="New"]');
+			const $btn = $(
+				"[data-page-route=Workspaces] .workspace-footer",
+			).find('[data-label="New"]');
 			if (!$btn.length) {
 				if (props.debug && getEnvironment() === "development") {
-					console.warn("Umbra.workspace.new(): Create workspace button not found.");
+					console.warn(
+						"Umbra.workspace.new(): Create workspace button not found.",
+					);
 					frappe.show_alert("Create workspace button not found.");
 				}
 				return;
 			}
 			$btn.css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.new(): Create workspace button hidden.");
+			if (props.debug && getEnvironment() === "development")
+				console.debug(
+					"Umbra.workspace.new(): Create workspace button hidden.",
+				);
 		},
 
 		// ----------------------------
@@ -933,41 +1196,60 @@ const Umbra = (function () {
 		sidebar: function (props = {}) {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.sidebar(): Conditional check returned false.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.workspace.sidebar(): Conditional check returned false.",
+						);
 					return;
 				}
 			}
-			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+			if (
+				Array.isArray(props.permissions) &&
+				typeof frappe !== "undefined" &&
+				frappe.user
+			) {
 				if (userHasRole(props.permissions)) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.sidebar(): User has bypass role, skipping hide.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.workspace.sidebar(): User has bypass role, skipping hide.",
+						);
 					return;
 				}
 			}
 
-			const $sidebar = $('[data-page-route=Workspaces] .layout-side-section');
+			const $sidebar = $(
+				"[data-page-route=Workspaces] .layout-side-section",
+			);
 			if (!$sidebar.length) {
 				if (props.debug && getEnvironment() === "development") {
-					console.warn("Umbra.workspace.sidebar(): Workspace sidebar not found.");
+					console.warn(
+						"Umbra.workspace.sidebar(): Workspace sidebar not found.",
+					);
 					frappe.show_alert("Workspace sidebar not found.");
 				}
 				return;
 			}
 			$sidebar.css("cssText", "display: none !important;");
 
-			$("button.sidebar-toggle-btn").css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development") console.debug("Umbra.workspace.sidebar(): Workspace sidebar hidden.");
-		}
+			$("button.sidebar-toggle-btn").css(
+				"cssText",
+				"display: none !important;",
+			);
+			if (props.debug && getEnvironment() === "development")
+				console.debug(
+					"Umbra.workspace.sidebar(): Workspace sidebar hidden.",
+				);
+		},
 	};
-
 
 	// ----------------------------
 	// List
 	// ----------------------------
 	/**
 	 * Dynamic API to hide individual elements for the * list routes (list view).
-	 * 
+	 *
 	 * @namespace Umbra.list
-	 * 
+	 *
 	 */
 	const list = {
 		// ----------------------------
@@ -997,46 +1279,63 @@ const Umbra = (function () {
 		sidebar: function (props = {}) {
 			if (typeof props.conditional === "function") {
 				if (!props.conditional()) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.list.sidebar(): Conditional check returned false.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.list.sidebar(): Conditional check returned false.",
+						);
 					return;
 				}
 			}
-			if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+			if (
+				Array.isArray(props.permissions) &&
+				typeof frappe !== "undefined" &&
+				frappe.user
+			) {
 				if (userHasRole(props.permissions)) {
-					if (props.debug && getEnvironment() === "development") console.debug("Umbra.list.sidebar(): User has bypass role, skipping hide.");
+					if (props.debug && getEnvironment() === "development")
+						console.debug(
+							"Umbra.list.sidebar(): User has bypass role, skipping hide.",
+						);
 					return;
 				}
 			}
 
-			const $sidebar = $('[data-page-route^="List"] .layout-side-section');
+			const $sidebar = $(
+				'[data-page-route^="List"] .layout-side-section',
+			);
 			if (!$sidebar.length) {
 				if (props.debug && getEnvironment() === "development") {
-					console.warn("Umbra.list.sidebar(): List View sidebar not found.");
+					console.warn(
+						"Umbra.list.sidebar(): List View sidebar not found.",
+					);
 					frappe.show_alert("List View sidebar not found.");
 				}
 				return;
 			}
 			$sidebar.css("cssText", "display: none !important;");
 
-			$("[data-page-route^='List'] button.sidebar-toggle-btn").css("cssText", "display: none !important;");
-			if (props.debug && getEnvironment() === "development") console.debug("Umbra.list.sidebar(): List sidebar hidden.");
-		}
+			$("[data-page-route^='List'] button.sidebar-toggle-btn").css(
+				"cssText",
+				"display: none !important;",
+			);
+			if (props.debug && getEnvironment() === "development")
+				console.debug("Umbra.list.sidebar(): List sidebar hidden.");
+		},
 	};
-
 
 	// ----------------------------
 	// table
 	// ----------------------------
 	/**
 	 * Dynamic API to hide elements for child tables.
-	 * 
+	 *
 	 * @namespace Umbra.table
-	 * 
+	 *
 	 */
 	const table = {
 		/**
 		 * Hide elements within child table form view.
-		 * 
+		 *
 		 */
 		form: {
 			// ----------------------------
@@ -1061,29 +1360,44 @@ const Umbra = (function () {
 			controls: function (props = {}) {
 				if (typeof props.conditional === "function") {
 					if (!props.conditional()) {
-						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.controls(): Conditional check returned false.");
+						if (props.debug && getEnvironment() === "development")
+							console.debug(
+								"Umbra.table.controls(): Conditional check returned false.",
+							);
 						return;
 					}
 				}
-				if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+				if (
+					Array.isArray(props.permissions) &&
+					typeof frappe !== "undefined" &&
+					frappe.user
+				) {
 					if (userHasRole(props.permissions)) {
-						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.controls: User has bypass role, skipping hide.");
+						if (props.debug && getEnvironment() === "development")
+							console.debug(
+								"Umbra.table.controls: User has bypass role, skipping hide.",
+							);
 						return;
 					}
 				}
 
-				const $controls = $('span.row-actions').find('button').not('button.grid-delete-row').not('button.grid-collapse-row');
+				const $controls = $("span.row-actions")
+					.find("button")
+					.not("button.grid-delete-row")
+					.not("button.grid-collapse-row");
 
 				if (!$controls.length) {
 					if (props.debug && getEnvironment() === "development") {
-						console.warn("Umbra.table.controls(): Umbra.table.controls.");
+						console.warn(
+							"Umbra.table.controls(): Umbra.table.controls.",
+						);
 					}
 					return;
 				}
 
 				$controls.each((index, control) => {
-					$(control).hide()
-				})
+					$(control).hide();
+				});
 			},
 			// ----------------------------
 			// Table Shortcuts
@@ -1107,31 +1421,42 @@ const Umbra = (function () {
 			shortcuts: function (props = {}) {
 				if (typeof props.conditional === "function") {
 					if (!props.conditional()) {
-						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.shortcuts(): Conditional check returned false.");
+						if (props.debug && getEnvironment() === "development")
+							console.debug(
+								"Umbra.table.shortcuts(): Conditional check returned false.",
+							);
 						return;
 					}
 				}
-				if (Array.isArray(props.permissions) && typeof frappe !== 'undefined' && frappe.user) {
+				if (
+					Array.isArray(props.permissions) &&
+					typeof frappe !== "undefined" &&
+					frappe.user
+				) {
 					if (userHasRole(props.permissions)) {
-						if (props.debug && getEnvironment() === "development") console.debug("Umbra.table.shortcuts(): User has bypass role, skipping hide.");
+						if (props.debug && getEnvironment() === "development")
+							console.debug(
+								"Umbra.table.shortcuts(): User has bypass role, skipping hide.",
+							);
 						return;
 					}
 				}
 
-				const $shortcuts = $('div.grid-footer-toolbar');
+				const $shortcuts = $("div.grid-footer-toolbar");
 
 				if (!$shortcuts.length) {
 					if (props.debug && getEnvironment() === "development") {
-						console.warn("Umbra.table.shortcuts(): Table shortcuts not found.");
+						console.warn(
+							"Umbra.table.shortcuts(): Table shortcuts not found.",
+						);
 					}
 					return;
 				}
 
 				$shortcuts.hide();
 			},
-		}
+		},
 	};
-
 
 	// Expose public API methods.
 	return {
@@ -1145,7 +1470,7 @@ const Umbra = (function () {
 		sections: sections,
 		workspace: workspace,
 		list: list,
-		table: table
+		table: table,
 	};
 })();
 
