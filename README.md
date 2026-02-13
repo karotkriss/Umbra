@@ -53,6 +53,11 @@
   - [Child Table Forms (Grid Row Forms)](#child-table-forms-grid-row-forms)
     - [Hiding Table Row Controls](#hiding-table-row-controls)
     - [Hiding Table Row Form Shortcuts](#hiding-table-row-form-shortcuts)
+  - [Desktop Page](#desktop-page)
+    - [Hiding Desktop Icons](#hiding-desktop-icons)
+    - [Hiding Search Bar](#hiding-search-bar)
+    - [Hiding Desktop Edit Button](#hiding-desktop-edit-button)
+    - [Hiding Desktop Navbar](#hiding-desktop-navbar)
 - [Contributing](#contributing)
 <!-- - [API Reference](#api-reference) -->
 
@@ -471,6 +476,94 @@ frappe.ui.form.on('YourParentDocType', {
     items_on_form_rendered: function(frm, cdt, cdn) {
         Umbra.table.form.shortcuts({
             // conditional: () => true, // Always hide, or add condition
+            debug: true
+        });
+    }
+});
+```
+
+### Desktop Page
+
+The `Umbra.desktop` namespace provides utilities to hide elements on the Frappe /desk route (desktop page). These are typically used in a global JS file included via `hooks.py`.
+
+> :information_source: The following functions are intended to be used in any one of your `app_included_js` files that load on the desktop page. They typically run inside a `$(document).ready()` or similar DOM ready check.
+
+#### Hiding Desktop Icons
+
+```javascript
+Umbra.desktop.icon({ icon: "IconName" })
+```
+
+Hide a specific desktop/sidebar icon by its name (data-id attribute):
+
+```javascript
+// In a global JS file included via hooks.py
+$(document).ready(() => {
+    if (frappe.get_route_str() === "app") { // Check if on desktop page
+        // Hide the "Settings" icon
+        Umbra.desktop.icon({
+            icon: "Settings",
+            debug: true
+        });
+
+        // Hide multiple icons
+        Umbra.desktop.icon({ icon: "Website" });
+        Umbra.desktop.icon({ icon: "Build" });
+    }
+});
+```
+
+#### Hiding Search Bar
+
+```javascript
+Umbra.desktop.searchBar({ /* props */ })
+```
+
+Hide the search bar on the desktop page:
+
+```javascript
+// In a global JS file
+$(document).ready(() => {
+    if (frappe.get_route_str() === "app") {
+        Umbra.desktop.searchBar({
+            debug: true
+        });
+    }
+});
+```
+
+#### Hiding Desktop Edit Button
+
+```javascript
+Umbra.desktop.edit({ /* props */ })
+```
+
+Hide the desktop edit button (ellipsis menu):
+
+```javascript
+// In a global JS file
+$(document).ready(() => {
+    if (frappe.get_route_str() === "app") {
+        Umbra.desktop.edit({
+            debug: true
+        });
+    }
+});
+```
+
+#### Hiding Desktop Navbar
+
+```javascript
+Umbra.desktop.navbar({ /* props */ })
+```
+
+Hide the entire top navigation bar on the desktop page:
+
+```javascript
+// In a global JS file
+$(document).ready(() => {
+    if (frappe.get_route_str() === "app") {
+        Umbra.desktop.navbar({
             debug: true
         });
     }

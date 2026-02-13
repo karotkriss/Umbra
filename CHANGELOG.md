@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.9.0] - 2026-02-13
+### Added
+- **Desktop Page Support:** Introduced `Umbra.desktop` namespace to manage UI elements on the /desk route.
+  - `Umbra.desktop.icon()`: Hide specific desktop/sidebar icons by name (data-id attribute)
+  - `Umbra.desktop.searchBar()`: Hide the search bar on the desktop page
+  - `Umbra.desktop.edit()`: Hide the desktop edit button (ellipsis menu)
+  - `Umbra.desktop.navbar()`: Hide the entire top navigation bar on the desktop page
+
 ## [1.8.0] - 2026-02-13
 ### Added
 - **Frappe v16 Support:**
